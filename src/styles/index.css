@@ -1,0 +1,65 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply font-sans antialiased text-gray-800 bg-white;
+  }
+  h1 {
+    @apply text-4xl font-bold md:text-5xl text-gray-900;
+  }
+  h2 {
+    @apply text-3xl font-bold md:text-4xl text-gray-900;
+  }
+  h3 {
+    @apply text-2xl font-bold md:text-3xl text-gray-900;
+  }
+  h4 {
+    @apply text-xl font-bold md:text-2xl text-gray-900;
+  }
+  h5 {
+    @apply text-lg font-bold md:text-xl text-gray-900;
+  }
+  h6 {
+    @apply font-bold text-gray-900;
+  }
+  a {
+    @apply text-gray-800 hover:text-gray-600;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center px-6 py-3 text-base font-medium rounded-md transition-all focus:outline-none;
+  }
+  .btn-primary {
+    @apply bg-black hover:bg-gray-800 text-white;
+  }
+  .btn-secondary {
+    @apply bg-gray-200 hover:bg-gray-300 text-gray-800;
+  }
+  .btn-outline {
+    @apply border-2 border-gray-800 text-gray-800 hover:bg-gray-100;
+  }
+  .container-custom {
+    @apply container mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  .section-padding {
+    @apply py-12 md:py-16 lg:py-20;
+  }
+  
+  /* 页面标题公共样式 */
+  .page-header {
+    @apply bg-gray-900 py-20;
+  }
+  .page-title {
+    @apply text-4xl md:text-5xl font-bold mb-4 text-white;
+  }
+  .page-subtitle {
+    @apply text-xl max-w-3xl mx-auto text-gray-200;
+  }
+} 
