@@ -45,12 +45,11 @@ function Navbar() {
         <Link to="/" className="flex items-center">
           <div className="h-10 w-auto mr-2">
             <img 
-              src="/images/hope-logo.png" 
+              src="/images/Logo.png" 
               alt="Hope Church Logo" 
               className="h-full"
             />
           </div>
-          <span className="text-2xl font-bold text-white tracking-wide">Canberra</span>
         </Link>
 
         {/* Desktop Navigation */}

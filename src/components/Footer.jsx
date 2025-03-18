@@ -20,7 +20,7 @@ function Footer() {
               <a href="https://www.instagram.com/hopecanberra/" className="text-white hover:text-primary-300 transition-colors" aria-label="Instagram">
                 <FaInstagram size={24} />
               </a>
-              <a href="#" className="text-white hover:text-primary-300 transition-colors" aria-label="YouTube">
+              <a href="https://www.youtube.com/@hopecanberra6351" className="text-white hover:text-primary-300 transition-colors" aria-label="YouTube">
                 <FaYoutube size={24} />
               </a>
             </div>

@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 const PageHeader = ({ title, subtitle, backgroundImage }) => (
-  <div className="relative bg-gray-900 py-20">
+  <div className="relative bg-gray-900 py-32">
     {/* Background image with overlay */}
     {backgroundImage && (
       <div className="absolute inset-0 z-0">
