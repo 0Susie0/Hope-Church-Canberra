@@ -1,99 +1,99 @@
-# Hope Church Canberra 网站
+# Hope Church Canberra Website
 
-这是 Hope Church Canberra 教会网站的原型项目，基于 React 和 Node.js 构建。
+This is the prototype project for the Hope Church Canberra website, built with React and Node.js.
 
-## 项目概述
+## Project Overview
 
-该网站原型包含以下核心功能和页面：
+The website prototype includes the following core features and pages:
 
-### 核心页面
-1. **首页**
-   - 全宽英雄图片展示教会使命和核心信息
-   - 服务时间、地点、即将举行的活动预览
-   - 醒目的行动号召按钮（如"加入我们"、"了解更多"）
+### Core Pages
+1. **Home Page**
+   - Full-width hero image showcasing church mission and core information
+   - Service times, location, and upcoming events preview
+   - Prominent call-to-action buttons (e.g., "Join Us", "Learn More")
 
-2. **关于我们**
-   - 教会历史、使命、核心价值观
-   - 团队介绍
+2. **About Us**
+   - Church history, mission, and core values
+   - Team introduction
 
-3. **生活小组/核心价值观**
-   - 生活小组详情
-   - 教会核心价值观展示
+3. **Life Groups/Core Values**
+   - Life group details
+   - Church core values display
 
-4. **活动与日历**
-   - 活动列表显示
-   - 交互式日历模块
-   - 搜索和筛选功能
+4. **Events & Calendar**
+   - Event list display
+   - Interactive calendar module
+   - Search and filter functionality
 
-5. **来访我们**
-   - 清晰的位置信息
-   - 多媒体元素（图片轮播、视频、社区故事）
+5. **Visit Us**
+   - Clear location information
+   - Multimedia elements (image carousel, video, community stories)
 
-### 特性
+### Features
 
-- **固定导航栏**：全局固定头部，确保用户随时可访问所有模块
-- **响应式布局**：自动适应各种设备尺寸（桌面和移动设备）
-- **社交媒体集成**：嵌入社交媒体动态内容
-- **活动日历**：支持月、周、日视图的交互式日历组件
-- **多媒体支持**：支持图片、视频和文档嵌入
+- **Fixed Navigation Bar**: Global fixed header ensuring users can access all modules at any time
+- **Responsive Layout**: Automatically adapts to various device sizes (desktop and mobile)
+- **Social Media Integration**: Embedded social media dynamic content
+- **Event Calendar**: Interactive calendar component supporting month, week, and day views
+- **Multimedia Support**: Support for images, videos, and document embedding
 
-## 技术栈
+## Tech Stack
 
-- **前端**：React, React Router
-- **样式**：CSS/SCSS, Bootstrap 或 Tailwind CSS
-- **后端**：Node.js, Express
-- **数据存储**：本原型阶段使用本地JSON文件模拟数据
+- **Frontend**: React, React Router
+- **Styling**: CSS/SCSS, Bootstrap or Tailwind CSS
+- **Backend**: Node.js, Express
+- **Data Storage**: Local JSON files for data simulation in this prototype phase
 
-## 如何安装
+## Installation
 
-1. 克隆仓库
+1. Clone the repository
    ```
-   git clone [仓库URL]
+   git clone [repository URL]
    cd hope-church-canberra
    ```
 
-2. 安装依赖
+2. Install dependencies
    ```
    npm install
    ```
 
-3. 启动开发服务器
+3. Start development server
    ```
    npm run dev
    ```
 
-4. 构建生产版本
+4. Build for production
    ```
    npm run build
    ```
 
-## 项目结构
+## Project Structure
 
 ```
 hope-church-canberra/
-├── public/               # 静态资源
-│   ├── images/           # 图片资源
-│   └── data/             # 模拟数据JSON文件
-├── src/                  # 源代码
-│   ├── components/       # React组件
-│   ├── pages/            # 页面组件
-│   ├── hooks/            # 自定义钩子
-│   ├── contexts/         # React上下文
-│   ├── utils/            # 工具函数
-│   ├── styles/           # 全局样式
-│   └── App.js            # 主应用组件
-├── package.json          # 项目依赖和脚本
-└── README.md             # 项目说明文档
+├── public/               # Static assets
+│   ├── images/           # Image resources
+│   └── data/             # Mock data JSON files
+├── src/                  # Source code
+│   ├── components/       # React components
+│   ├── pages/            # Page components
+│   ├── hooks/            # Custom hooks
+│   ├── contexts/         # React contexts
+│   ├── utils/            # Utility functions
+│   ├── styles/           # Global styles
+│   └── App.js            # Main application component
+├── package.json          # Project dependencies and scripts
+└── README.md             # Project documentation
 ```
 
-## 后续开发计划
+## Future Development Plans
 
-1. 集成真实数据库，替代模拟数据
-2. 添加用户认证功能
-3. 实现活动注册和管理系统
-4. 增加管理员后台界面
-5. 优化性能和用户体验
+1. Integrate real database to replace mock data
+2. Add user authentication functionality
+3. Implement event registration and management system
+4. Add admin dashboard interface
+5. Optimize performance and user experience
 
-## 许可证
+## License
 
-[待定] 
+[To be determined] 
