@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { DateTime } from 'luxon';
 
@@ -52,6 +52,9 @@ const generateMonthlyDatesForDayOfWeek = (startYear, endYear, dayOfWeek, weekOfM
   // Create a DateTime object for January 1st of the start year
   let current = DateTime.local(startYear, 1, 1);
   
+  // For last Tuesday of the month (Encounter Night)
+  const isLastWeekOfMonth = weekOfMonth >= 20;
+  
   // Generate dates until we have enough or exceed the end year
   while (dates.length < count && current.year <= endYear) {
     // Find the first occurrence of the day in the month
@@ -60,13 +63,25 @@ const generateMonthlyDatesForDayOfWeek = (startYear, endYear, dayOfWeek, weekOfM
       targetDate = targetDate.plus({ days: 1 });
     }
     
-    // Adjust to the specified week of the month (e.g., 4th Tuesday)
-    if (weekOfMonth > 1) {
-      targetDate = targetDate.plus({ weeks: weekOfMonth - 1 });
-      
-      // If this pushes us into the next month, use the last occurrence in the current month
-      if (targetDate.month !== current.month) {
-        targetDate = targetDate.minus({ weeks: 1 });
+    if (isLastWeekOfMonth) {
+      // For "last Tuesday of month" type events
+      // Find the last day of the month
+      const lastDay = current.endOf('month');
+      // Start from the last day and go backwards until we find the right weekday
+      let lastOccurrence = lastDay;
+      while (lastOccurrence.weekday !== dayOfWeek) {
+        lastOccurrence = lastOccurrence.minus({ days: 1 });
+      }
+      targetDate = lastOccurrence;
+    } else {
+      // Adjust to the specified week of the month (e.g., 4th Tuesday)
+      if (weekOfMonth > 1) {
+        targetDate = targetDate.plus({ weeks: weekOfMonth - 1 });
+        
+        // If this pushes us into the next month, use the last occurrence in the current month
+        if (targetDate.month !== current.month) {
+          targetDate = targetDate.minus({ weeks: 1 });
+        }
       }
     }
     
@@ -77,6 +92,11 @@ const generateMonthlyDatesForDayOfWeek = (startYear, endYear, dayOfWeek, weekOfM
     
     // Move to the next month
     current = current.plus({ months: 1 });
+  }
+  
+  // For debugging
+  if (dayOfWeek === 2 && weekOfMonth === 99) {
+    console.log('Generated Encounter Night dates:', dates);
   }
   
   return dates;
@@ -113,7 +133,7 @@ export const eventsData = [
   })),
 
   // Recurring Events - Encounter Night (monthly on the last Tuesday)
-  ...generateMonthlyDatesForDayOfWeek(currentYear, nextYear, 2, 24).map((date, i) => ({
+  ...generateMonthlyDatesForDayOfWeek(currentYear, nextYear, 2, 99, 24).map((date, i) => ({
     id: `encounter-night-${i}`,
     title: "Encounter Night",
     date: date,
@@ -121,7 +141,8 @@ export const eventsData = [
     location: "Vision Church",
     description: "A night of extended worship and prayer.",
     image: "/images/Events/Encounter Night.jpg",
-    category: "Worship"
+    category: "Worship",
+    isMonthly: true
   })),
 
   // Recurring Events - Community Service (weekly on Saturdays)
@@ -215,71 +236,8 @@ const Calendar = ({ events, onDateClick }) => {
   const [currentDate, setCurrentDate] = useState(new Date(currentYear, 0, 1)); // Start from current year
   const [currentView, setCurrentView] = useState('month'); // 'month', 'week', 'day'
   
-  // Pre-process events to only include nearest future occurrences of recurring events
-  const getFilteredCalendarEvents = () => {
-    // Get current date
-    const now = new Date();
-    
-    // Identify recurring event types from their IDs
-    const recurringTypes = ['sunday-service', 'kids-church', 'encounter-night', 'community-service'];
-    
-    // Group events by recurring type
-    const eventsByType = {};
-    recurringTypes.forEach(type => {
-      eventsByType[type] = [];
-    });
-    
-    // Separate recurring events from one-time events
-    const oneTimeEvents = [];
-    
-    events.forEach(event => {
-      let isRecurring = false;
-      
-      // Check if this is a recurring event
-      for (const type of recurringTypes) {
-        if (event.id.includes(type)) {
-          eventsByType[type].push(event);
-          isRecurring = true;
-          break;
-        }
-      }
-      
-      // If not recurring, add to one-time events
-      if (!isRecurring) {
-        oneTimeEvents.push(event);
-      }
-    });
-    
-    // Find nearest future occurrence for each recurring event type
-    const nearestRecurringEvents = [];
-    
-    recurringTypes.forEach(type => {
-      if (eventsByType[type].length > 0) {
-        // Filter future events
-        const futureEvents = eventsByType[type].filter(e => new Date(e.date) >= now);
-        
-        // Sort by date (ascending)
-        futureEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
-        
-        // Add the nearest one (if exists)
-        if (futureEvents.length > 0) {
-          nearestRecurringEvents.push(futureEvents[0]);
-        } else {
-          // If no future events, add the last past occurrence
-          const pastEvents = eventsByType[type].sort((a, b) => new Date(b.date) - new Date(a.date));
-          if (pastEvents.length > 0) {
-            nearestRecurringEvents.push(pastEvents[0]);
-          }
-        }
-      }
-    });
-    
-    // Combine one-time events with nearest recurring events
-    return [...oneTimeEvents, ...nearestRecurringEvents];
-  };
-  
-  // Memoize filtered events to avoid recalculating on every render
-  const filteredCalendarEvents = React.useMemo(() => getFilteredCalendarEvents(), [events]);
+  // For calendar view, we'll show all events instead of filtering to nearest occurrence
+  // No need for additional filtering here as we want to show all events throughout the year
   
   // Get the number of days in the current month
   const getDaysInMonth = (year, month) => {
@@ -328,28 +286,54 @@ const Calendar = ({ events, onDateClick }) => {
     return weeks;
   };
   
-  // Check if a day has events (using filtered events)
+  // Check if a day has events
   const hasEvents = (day) => {
     if (!day) return false;
     
-    return filteredCalendarEvents.some(event => {
-      const eventDate = new Date(event.date);
-      return eventDate.getDate() === day.getDate() &&
-             eventDate.getMonth() === day.getMonth() &&
-             eventDate.getFullYear() === day.getFullYear();
-    });
+    return getEventsForDay(day).length > 0;
   };
   
   // Get events for a specific day (using filtered events)
   const getEventsForDay = (day) => {
     if (!day) return [];
     
-    return filteredCalendarEvents.filter(event => {
-      const eventDate = new Date(event.date);
-      return eventDate.getDate() === day.getDate() &&
-             eventDate.getMonth() === day.getMonth() &&
-             eventDate.getFullYear() === day.getFullYear();
+    // Check if this day is during Church Camp (March 21-23)
+    const isChurchCampDay = () => {
+      const campStartDate = new Date(currentYear, 2, 21); // March 21
+      const campEndDate = new Date(currentYear, 2, 23); // March 23
+      
+      return day >= campStartDate && day <= campEndDate;
+    };
+    
+    // Filter events for this day
+    let eventsForDay = events.filter(event => {
+      // For regular single-day events
+      if (!event.isMultiDay) {
+        const eventDate = new Date(event.date);
+        return eventDate.getDate() === day.getDate() &&
+               eventDate.getMonth() === day.getMonth() &&
+               eventDate.getFullYear() === day.getFullYear();
+      } 
+      // For multi-day events
+      else if (event.endDate) {
+        const startDate = new Date(event.date);
+        const endDate = new Date(event.endDate);
+        
+        // Check if the current day falls within the event's date range
+        return day >= startDate && day <= endDate;
+      }
+      
+      return false;
     });
+    
+    // If this is March 23 (Church Camp day), filter out Sunday Service and Kids Church
+    if (day.getDate() === 23 && day.getMonth() === 2 && day.getFullYear() === currentYear) {
+      eventsForDay = eventsForDay.filter(event => {
+        return !event.id.includes('sunday-service') && !event.id.includes('kids-church');
+      });
+    }
+    
+    return eventsForDay;
   };
   
   // Go to previous month/week/day
@@ -414,9 +398,37 @@ const Calendar = ({ events, onDateClick }) => {
               <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd"></path>
             </svg>
           </button>
-          <h2 className="text-lg font-semibold text-gray-900">
-            {currentDate.toLocaleString('en-US', { year: 'numeric', month: 'long' })}
-          </h2>
+          <div className="flex items-center space-x-2">
+            <select 
+              value={currentDate.getMonth()} 
+              onChange={(e) => {
+                const newDate = new Date(currentDate);
+                newDate.setMonth(parseInt(e.target.value));
+                setCurrentDate(newDate);
+              }}
+              className="px-2 py-1 border border-gray-300 rounded text-base"
+            >
+              {[
+                'January', 'February', 'March', 'April', 'May', 'June', 
+                'July', 'August', 'September', 'October', 'November', 'December'
+              ].map((month, index) => (
+                <option key={month} value={index}>{month}</option>
+              ))}
+            </select>
+            <select 
+              value={currentDate.getFullYear()} 
+              onChange={(e) => {
+                const newDate = new Date(currentDate);
+                newDate.setFullYear(parseInt(e.target.value));
+                setCurrentDate(newDate);
+              }}
+              className="px-2 py-1 border border-gray-300 rounded text-base"
+            >
+              {[currentYear, nextYear].map(year => (
+                <option key={year} value={year}>{year}</option>
+              ))}
+            </select>
+          </div>
           <button 
             onClick={goToNext}
             className="p-2 rounded-full hover:bg-gray-100"
@@ -439,7 +451,7 @@ const Calendar = ({ events, onDateClick }) => {
               {week.map((day, dayIndex) => (
                 <div 
                   key={dayIndex} 
-                  className={`bg-white min-h-[80px] p-2 ${
+                  className={`bg-white min-h-[120px] p-2 ${
                     day && day.getDate() === new Date().getDate() && 
                     day.getMonth() === new Date().getMonth() && 
                     day.getFullYear() === new Date().getFullYear() 
@@ -465,17 +477,48 @@ const Calendar = ({ events, onDateClick }) => {
                         )}
                       </div>
                       <div className="mt-1">
-                        {getEventsForDay(day).slice(0, 2).map((event, eventIndex) => (
+                        {getEventsForDay(day).slice(0, 3).map((event, eventIndex) => (
                           <div 
                             key={eventIndex} 
-                            className="text-xs truncate p-1 mb-1 rounded bg-gray-200 text-gray-800"
+                            className={`text-xs mb-1 rounded hover:bg-gray-300 p-1 cursor-pointer border-l-4 ${
+                              event.category === "Service" ? "border-blue-500 bg-blue-50" :
+                              event.category === "Workshop" ? "border-green-500 bg-green-50" :
+                              event.category === "Worship" ? "border-purple-500 bg-purple-50" :
+                              event.category === "Children" ? "border-yellow-500 bg-yellow-50" :
+                              "border-gray-500 bg-gray-50"
+                            } ${event.isMultiDay || event.id.includes('encounter-night') ? "font-medium" : ""}`}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              window.location.href = `/events/${event.id}`;
+                            }}
                           >
-                            {event.title}
+                            <div className="font-semibold truncate">{event.title}</div>
+                            <div className="flex justify-between text-gray-600">
+                              <span>{event.time}</span>
+                              <div className="flex items-center">
+                                {event.isMultiDay && (
+                                  <>
+                                    {new Date(event.date).getDate() === day.getDate() && 
+                                     new Date(event.date).getMonth() === day.getMonth() && (
+                                      <span className="text-xs bg-blue-100 text-blue-800 px-1 rounded mr-1">Start</span>
+                                    )}
+                                    {event.endDate && new Date(event.endDate).getDate() === day.getDate() && 
+                                     new Date(event.endDate).getMonth() === day.getMonth() && (
+                                      <span className="text-xs bg-blue-100 text-blue-800 px-1 rounded mr-1">End</span>
+                                    )}
+                                  </>
+                                )}
+                                {event.id.includes('encounter-night') && (
+                                  <span className="text-xs bg-purple-100 text-purple-800 px-1 rounded mr-1">Monthly</span>
+                                )}
+                                <span className="text-xs">{event.category}</span>
+                              </div>
+                            </div>
                           </div>
                         ))}
-                        {getEventsForDay(day).length > 2 && (
+                        {getEventsForDay(day).length > 3 && (
                           <div className="text-xs text-gray-500 pl-1">
-                            +{getEventsForDay(day).length - 2} more
+                            +{getEventsForDay(day).length - 3} more
                           </div>
                         )}
                       </div>
@@ -521,7 +564,33 @@ const Calendar = ({ events, onDateClick }) => {
         </button>
       </div>
       
-      {currentView === 'month' && renderMonthView()}
+      {currentView === 'month' && (
+        <>
+          <div className="flex flex-wrap gap-2 mb-4 justify-end">
+            <div className="inline-flex items-center">
+              <div className="w-3 h-3 bg-blue-500 rounded-full mr-1"></div>
+              <span className="text-xs">Service</span>
+            </div>
+            <div className="inline-flex items-center">
+              <div className="w-3 h-3 bg-green-500 rounded-full mr-1"></div>
+              <span className="text-xs">Workshop</span>
+            </div>
+            <div className="inline-flex items-center">
+              <div className="w-3 h-3 bg-purple-500 rounded-full mr-1"></div>
+              <span className="text-xs">Worship</span>
+            </div>
+            <div className="inline-flex items-center">
+              <div className="w-3 h-3 bg-yellow-500 rounded-full mr-1"></div>
+              <span className="text-xs">Children</span>
+            </div>
+            <div className="inline-flex items-center ml-4 border-l pl-4 border-gray-300">
+              <span className="text-xs font-medium">Bold Text</span>
+              <span className="text-xs ml-1">= Multi-day Event</span>
+            </div>
+          </div>
+          {renderMonthView()}
+        </>
+      )}
       {currentView === 'week' && <div className="text-center p-8 bg-white rounded-lg shadow">Week view feature is under development</div>}
       {currentView === 'day' && <div className="text-center p-8 bg-white rounded-lg shadow">Day view feature is under development</div>}
     </div>
@@ -662,13 +731,18 @@ const SearchAndFilter = ({ onSearch, onFilter }) => {
 const Events = () => {
   const [view, setView] = useState('list'); // 'list' or 'calendar'
   
+  // Log all events for debugging
+  useEffect(() => {
+    console.log('All events:', eventsData.filter(e => e.id.includes('encounter-night')));
+  }, []);
+  
   // Get the filtered events (showing only nearest future occurrences of recurring events)
   const getFilteredEvents = () => {
     // Get current date
     const now = new Date();
     
     // Identify recurring event types from their IDs
-    const recurringTypes = ['sunday-service', 'kids-church', 'encounter-night', 'community-service'];
+    const recurringTypes = ['sunday-service', 'kids-church', 'encounter-night', 'community-service', 'worship-night'];
     
     // Group events by recurring type
     const eventsByType = {};
@@ -678,6 +752,8 @@ const Events = () => {
     
     // Separate recurring events from one-time events
     const oneTimeEvents = [];
+    const weeklyRecurringEvents = [];
+    const monthlyRecurringEvents = [];
     
     eventsData.forEach(event => {
       let isRecurring = false;
@@ -686,6 +762,14 @@ const Events = () => {
       for (const type of recurringTypes) {
         if (event.id.includes(type)) {
           eventsByType[type].push(event);
+          
+          // Special handling for monthly events like Encounter Night
+          if (type === 'encounter-night') {
+            monthlyRecurringEvents.push(event);
+          } else {
+            weeklyRecurringEvents.push(event);
+          }
+          
           isRecurring = true;
           break;
         }
@@ -697,11 +781,12 @@ const Events = () => {
       }
     });
     
-    // Find nearest future occurrence for each recurring event type
-    const nearestRecurringEvents = [];
+    // Find nearest future occurrence for each weekly recurring event type
+    const nearestWeeklyEvents = [];
     
-    recurringTypes.forEach(type => {
-      if (eventsByType[type].length > 0) {
+    // Process weekly recurring events
+    Object.keys(eventsByType).forEach(type => {
+      if (type !== 'encounter-night' && eventsByType[type].length > 0) {
         // Filter future events
         const futureEvents = eventsByType[type].filter(e => new Date(e.date) >= now);
         
@@ -710,27 +795,84 @@ const Events = () => {
         
         // Add the nearest one (if exists)
         if (futureEvents.length > 0) {
-          nearestRecurringEvents.push(futureEvents[0]);
+          nearestWeeklyEvents.push(futureEvents[0]);
         } else {
           // If no future events, add the last past occurrence
           const pastEvents = eventsByType[type].sort((a, b) => new Date(b.date) - new Date(a.date));
           if (pastEvents.length > 0) {
-            nearestRecurringEvents.push(pastEvents[0]);
+            nearestWeeklyEvents.push(pastEvents[0]);
           }
         }
       }
     });
     
+    // For monthly events like Encounter Night, show only the nearest one
+    const nearestMonthlyEvents = [];
+    
+    // Process Encounter Night events
+    if (eventsByType['encounter-night'] && eventsByType['encounter-night'].length > 0) {
+      console.log('Processing Encounter Night events:', eventsByType['encounter-night'].length);
+      
+      // Filter future events
+      const futureEvents = eventsByType['encounter-night'].filter(e => new Date(e.date) >= now);
+      console.log('Future Encounter Night events:', futureEvents.length);
+      
+      // Sort by date (ascending)
+      futureEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
+      
+      // Add only the nearest occurrence
+      if (futureEvents.length > 0) {
+        nearestMonthlyEvents.push(futureEvents[0]);
+        console.log('Added nearest Encounter Night event:', futureEvents[0].date);
+      } else {
+        // If no future events, add the last past occurrence
+        const pastEvents = eventsByType['encounter-night'].sort((a, b) => new Date(b.date) - new Date(a.date));
+        if (pastEvents.length > 0) {
+          nearestMonthlyEvents.push(pastEvents[0]);
+          console.log('Added most recent past Encounter Night event:', pastEvents[0].date);
+        }
+      }
+    } else {
+      console.log('No Encounter Night events found in eventsByType');
+      // Manually add Encounter Night events if they're missing from the event type grouping
+      const encounterNightEvents = eventsData.filter(e => e.id.includes('encounter-night'));
+      console.log('Manually found Encounter Night events:', encounterNightEvents.length);
+      
+      if (encounterNightEvents.length > 0) {
+        // Filter future events
+        const futureEvents = encounterNightEvents.filter(e => new Date(e.date) >= now);
+        
+        // Sort by date (ascending)
+        futureEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
+        
+        // Add only the nearest occurrence
+        if (futureEvents.length > 0) {
+          nearestMonthlyEvents.push(futureEvents[0]);
+        } else {
+          // If no future events, add the last past occurrence
+          const pastEvents = encounterNightEvents.sort((a, b) => new Date(b.date) - new Date(a.date));
+          if (pastEvents.length > 0) {
+            nearestMonthlyEvents.push(pastEvents[0]);
+          }
+        }
+      }
+    }
+    
     // Combine one-time events with nearest recurring events
-    return [...oneTimeEvents, ...nearestRecurringEvents];
+    return [...oneTimeEvents, ...nearestWeeklyEvents, ...nearestMonthlyEvents];
   };
   
-  // Initialize with filtered events
-  const [filteredEvents, setFilteredEvents] = useState(getFilteredEvents());
+  // Get the filtered events list (memoized)
+  const filteredEventsList = React.useMemo(() => getFilteredEvents(), [eventsData]);
+  
+  // Initialize state
+  const [filteredEvents, setFilteredEvents] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
   
-  // Get the filtered events list (memoized)
-  const filteredEventsList = React.useMemo(() => getFilteredEvents(), []);
+  // Update filtered events when filteredEventsList changes
+  useEffect(() => {
+    setFilteredEvents(filteredEventsList);
+  }, [filteredEventsList]);
   
   // Handle search
   const handleSearch = (searchTerm) => {
