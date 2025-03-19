@@ -12,7 +12,7 @@ function Footer() {
           {/* About Us Section */}
           <div>
             <h4 className="text-xl font-bold mb-4">Hope Church</h4>
-            <p className="mb-4">Hope Church is a community filled with love and care. We welcome everyone to join our family.</p>
+            <p className="mb-4">Hope Church Canberra is a community filled with love and care. We welcome everyone to join our family.</p>
             <div className="flex space-x-4">
               <a href="https://www.facebook.com/HopeCanberra" className="text-white hover:text-primary-300 transition-colors" aria-label="Facebook">
                 <FaFacebook size={24} />
@@ -61,13 +61,10 @@ function Footer() {
             <h4 className="text-xl font-bold mb-4">Contact Us</h4>
             <ul className="space-y-2">
               <li className="flex items-center">
-                <FaPhone className="mr-2" /> <span>(02) 1234 5678</span>
-              </li>
-              <li className="flex items-center">
                 <FaEnvelope className="mr-2" /> <span>hopechurchact@gmail.com</span>
               </li>
               <li className="flex items-center">
-                <FaMapMarkerAlt className="mr-2" /> <span>P.O. Box 123, Canberra, ACT 2601</span>
+                <FaMapMarkerAlt className="mr-2" /> <span>P.O. Box 3444, Belconnen ACT 2616</span>
               </li>
             </ul>
           </div>

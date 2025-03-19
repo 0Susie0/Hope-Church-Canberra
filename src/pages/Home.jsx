@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { eventsData } from './Events';
+import { DateTime } from 'luxon';
 
 const HeroSection = () => (
   <div className="relative h-screen overflow-hidden">
@@ -177,66 +179,128 @@ const ImageCarousel = () => {
   );
 };
 
-const UpcomingEvents = () => (
-  <div className="bg-gray-100 py-16">
-    <div className="container mx-auto px-4">
-      <div className="text-center mb-12">
-        <h2 className="text-3xl font-bold mb-2 text-gray-900">Upcoming Events</h2>
-        <div className="w-20 h-1 bg-black mx-auto"></div>
-      </div>
+const UpcomingEvents = () => {
+  // Get the next occurrence of a recurring event
+  const getNextOccurrence = (eventId) => {
+    // Find all occurrences of this event type
+    const eventType = eventId.split('-').slice(0, -1).join('-');
+    const allEventsOfType = eventsData.filter(e => e.id.startsWith(eventType));
+    
+    // Find future events
+    const now = DateTime.now().setLocale('en');
+    const futureEvents = allEventsOfType.filter(e => 
+      DateTime.fromISO(e.date).setLocale('en') >= now
+    );
+    
+    // Sort by date (ascending) and get the nearest one
+    futureEvents.sort((a, b) => 
+      DateTime.fromISO(a.date).setLocale('en') < DateTime.fromISO(b.date).setLocale('en') ? -1 : 1
+    );
+    
+    return futureEvents.length > 0 ? futureEvents[0] : allEventsOfType[0];
+  };
+  
+  // Get the next occurrences for recurring events
+  const nextChurchCamp = eventsData.find(e => e.id === "church-camp-2025");
+  const nextEncounterNight = getNextOccurrence("encounter-night");
+  const nextCommunityService = getNextOccurrence("community-service");
+  
+  // Format date for display
+  const formatDate = (event) => {
+    if (!event) return "";
+    
+    if (event.isMultiDay && event.endDate) {
+      const startDate = DateTime.fromISO(event.date).setLocale('en')
+        .toLocaleString({
+          weekday: 'long',
+          month: 'long', 
+          day: 'numeric',
+          year: 'numeric'
+        });
+        
+      const endDate = DateTime.fromISO(event.endDate).setLocale('en')
+        .toLocaleString({
+          weekday: 'long',
+          month: 'long', 
+          day: 'numeric',
+          year: 'numeric'
+        });
+        
+      return `${startDate} - ${endDate}`;
+    }
+    
+    const formattedDate = DateTime.fromISO(event.date).setLocale('en')
+      .toLocaleString({
+        weekday: 'long',
+        month: 'long', 
+        day: 'numeric',
+        year: 'numeric'
+      });
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <div className="bg-white rounded-lg overflow-hidden shadow-md">
-          <div className="h-48 bg-gray-300">
-            <img src="/images/Church Fire.jpg" alt="Church Camp" className="w-full h-full object-cover" />
+    return `${formattedDate} at ${event.time}`;
+  };
+  
+  return (
+    <div className="bg-gray-100 py-16">
+      <div className="container mx-auto px-4">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold mb-2 text-gray-900">Upcoming Events</h2>
+          <div className="w-20 h-1 bg-black mx-auto"></div>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="bg-white rounded-lg overflow-hidden shadow-md">
+            <div className="h-48 bg-gray-300">
+              <img src="/images/Church Fire.jpg" alt="Church Camp" className="w-full h-full object-cover" />
+            </div>
+            <div className="p-6">
+              <div className="text-sm text-gray-600 mb-2">{formatDate(nextChurchCamp)}</div>
+              <h3 className="text-xl font-semibold mb-2 text-gray-900">Church Camp</h3>
+              <p className="text-gray-600 mb-4">Three days of outdoor activities, fellowship, and spiritual growth for the church families.</p>
+              <Link to="/events/church-camp-2025" className="text-gray-700 hover:text-black font-medium">
+                Learn More →
+              </Link>
+            </div>
           </div>
-          <div className="p-6">
-            <div className="text-sm text-gray-600 mb-2">March 21 - March 23</div>
-            <h3 className="text-xl font-semibold mb-2 text-gray-900">Church Camp</h3>
-            <p className="text-gray-600 mb-4">3 days of outdoor activities, fellowship, and spiritual growth for the church families.</p>
-            <Link to="/events" className="text-gray-700 hover:text-black font-medium">
-              Learn More →
-            </Link>
+          
+          <div className="bg-white rounded-lg overflow-hidden shadow-md">
+            <div className="h-48 bg-gray-300">
+              <img src="/images/Events/Encounter Night.jpg" alt="Encounter Night" className="w-full h-full object-cover" />
+            </div>
+            <div className="p-6">
+              <div className="text-sm text-gray-600 mb-2">{formatDate(nextEncounterNight)}</div>
+              <h3 className="text-xl font-semibold mb-2 text-gray-900">Encounter Night</h3>
+              <p className="text-gray-600 mb-4">A night of extended worship and prayer.</p>
+              <Link to="/events/encounter-night-0" className="text-gray-700 hover:text-black font-medium">
+                Learn More →
+              </Link>
+            </div>
+          </div>
+          
+          <div className="bg-white rounded-lg overflow-hidden shadow-md">
+            <div className="h-48 bg-gray-300">
+              <img src="/images/Events/Community Service.jpg" alt="Community Service" className="w-full h-full object-cover" />
+            </div>
+            <div className="p-6">
+              <div className="text-sm text-gray-600 mb-2">{formatDate(nextCommunityService)}</div>
+              <h3 className="text-xl font-semibold mb-2 text-gray-900">Community Service</h3>
+              <p className="text-gray-600 mb-4">Join us in serving our local community through various outreach projects.</p>
+              <Link to="/events/community-service-0" className="text-gray-700 hover:text-black font-medium">
+                Learn More →
+              </Link>
+            </div>
           </div>
         </div>
         
-        <div className="bg-white rounded-lg overflow-hidden shadow-md">
-          <div className="h-48 bg-gray-300">
-            <img src="/images/Events/Encounter Night.jpg" alt="Concert" className="w-full h-full object-cover" />
-          </div>
-          <div className="p-6">
-            <div className="text-sm text-gray-600 mb-2">March 25, 7:00 PM</div>
-            <h3 className="text-xl font-semibold mb-2 text-gray-900">Encounter Night</h3>
-            <p className="text-gray-600 mb-4">A special evening of music and worship led by our worship team.</p>
-            <Link to="/events" className="text-gray-700 hover:text-black font-medium">
-              Learn More →
-            </Link>
-          </div>
+        <div className="text-center mt-12">
+          <Link to="/events" className="bg-black hover:bg-gray-800 text-white font-bold py-3 px-8 rounded-lg transition duration-300">
+            View All Events
+          </Link>
         </div>
-        
-        <div className="bg-white rounded-lg overflow-hidden shadow-md">
-          <div className="h-48 bg-gray-300">
-            <img src="/images/Events/Community Service.jpg" alt="Community Service" className="w-full h-full object-cover" />
-          </div>
-          <div className="p-6">
-            <div className="text-sm text-gray-600 mb-2">July 2, 9:00 AM</div>
-            <h3 className="text-xl font-semibold mb-2 text-gray-900">Community Service</h3>
-            <p className="text-gray-600 mb-4">Join us in helping our community through making breakfast and lunch.</p>
-            <Link to="/events" className="text-gray-700 hover:text-black font-medium">
-              Learn More →
-            </Link>
-          </div>
-        </div>
-      </div>
-      
-      <div className="text-center mt-12">
-        <Link to="/events" className="bg-black hover:bg-gray-800 text-white font-bold py-3 px-8 rounded-lg transition duration-300">
-          View All Events
-        </Link>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 const CommunityStories = () => {
   const stories = [

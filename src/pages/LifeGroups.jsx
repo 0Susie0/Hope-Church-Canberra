@@ -27,46 +27,58 @@ const LifeGroupsSection = () => {
   const lifeGroups = [
     {
       id: 1,
-      name: "Zion Life Group",
-      leader: "John & Mary Smith",
-      time: "Friday 7:30 PM",
-      location: "Belconnen",
-      description: "A vibrant young adults group focused on deep Bible study and community building.",
+      name: "Zion",
+      leader: "Yuh-Lin & Joel (Zion 1) / Kaye & Geber (Zion 2)",
+      time: "Wednesday 7:00 PM",
+      location: "Whitlam (Zion 1) / Belconnen (Zion 2)",
+      description: "A vibrant young working adults group focused on deep Bible study and community building.",
       image: "/images/Lifegroups/Zion.jpg"
     },
     {
       id: 2,
-      name: "Eden Life Group",
-      leader: "David & Sarah Johnson",
-      time: "Wednesday 7:00 PM",
-      location: "Gungahlin",
+      name: "Eden",
+      leader: "Abigail & Rishi",
+      time: "Friday 7:00 PM",
+      location: "Denman Prospect",
       description: "A welcoming family group that combines worship, prayer, and fellowship.",
       image: "/images/Lifegroups/Eden.jpg"
     },
     {
       id: 3,
-      name: "Bethel Life Group",
-      leader: "Michael & Emma Wilson",
-      time: "Thursday 7:30 PM",
-      location: "Woden",
-      description: "A diverse group that focuses on prayer and spiritual growth.",
+      name: "Bethel",
+      leader: "Sarah Lyn & Jeff",
+      time: "Friday 7:00 PM",
+      location: "Denman Prospect",
+      description: "A welcoming family group that combines worship, prayer, and fellowship.",
       image: "/images/Lifegroups/Bethel.jpg"
     },
     {
       id: 4,
       name: "Hope on Campus",
-      leader: "James Lee",
-      time: "Tuesday 6:00 PM",
-      location: "ANU Campus",
+      leader: "Eugene",
+      time: "Wednesday 6:30 PM",
+      location: "ANU Campus / UC Campus",
       description: "A dynamic student group meeting on campus for fellowship and Bible study.",
-      image: "/images/Lifegroups/HopeOnCampus.jpg"
+      image: "/images/Lifegroups/HopeOnCampus.jpg",
+      socialLinks: [
+        {
+          name: "ANU Hope on Campus",
+          url: "https://www.facebook.com/ANUHopeOnCampus",
+          type: "facebook"
+        },
+        {
+          name: "UC Hope on Campus",
+          url: "https://www.facebook.com/UCHopeOnCampus",
+          type: "facebook"
+        }
+      ]
     },
     {
       id: 5,
-      name: "Ablaze Youth",
-      leader: "Daniel & Rachel Brown",
-      time: "Friday 6:30 PM",
-      location: "Church",
+      name: "Ablaze",
+      leader: "Andrew & Illy",
+      time: "Friday 7:00 PM",
+      location: "Woden",
       description: "Our youth group for teenagers, full of energy and passion for God.",
       image: "/images/Lifegroups/Ablaze.jpg"
     },
@@ -78,9 +90,6 @@ const LifeGroupsSection = () => {
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold mb-2">Our Life Groups</h2>
           <div className="w-20 h-1 bg-gray-800 mx-auto mb-4"></div>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            Life groups are an important part of our church, providing a small, intimate environment where members can build relationships, learn, and grow.
-          </p>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -105,12 +114,38 @@ const LifeGroupsSection = () => {
                     </svg>
                     {group.location}
                   </p>
-                  <p className="flex items-center text-gray-700">
+                  <p className="flex items-center text-gray-700 mb-2">
                     <svg className="w-5 h-5 mr-2 text-gray-700" fill="currentColor" viewBox="0 0 20 20">
                       <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"></path>
                     </svg>
                     Leader: {group.leader}
                   </p>
+                  
+                  {group.socialLinks && group.socialLinks.length > 0 && (
+                    <div className="mt-3 pt-3 border-t">
+                      <p className="text-sm font-semibold text-gray-700 mb-2">Social Media:</p>
+                      <div className="flex space-x-3">
+                        {group.socialLinks.map((link, i) => (
+                          <a 
+                            key={i} 
+                            href={link.url} 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            className="text-blue-600 hover:text-blue-800"
+                          >
+                            {link.type === 'facebook' && (
+                              <div className="flex items-center">
+                                <svg className="w-5 h-5 mr-1" fill="currentColor" viewBox="0 0 24 24">
+                                  <path d="M22.675 0H1.325C.593 0 0 .593 0 1.325v21.351C0 23.407.593 24 1.325 24H12.82v-9.294H9.692v-3.622h3.128V8.413c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12V24h6.116c.73 0 1.323-.593 1.323-1.325V1.325C24 .593 23.407 0 22.675 0z"/>
+                                </svg>
+                                {link.name}
+                              </div>
+                            )}
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

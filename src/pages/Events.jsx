@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { DateTime } from 'luxon';
 
 const PageHeader = ({ title, subtitle, backgroundImage }) => (
   <div className="relative bg-gray-900 py-32">
@@ -23,85 +24,127 @@ const PageHeader = ({ title, subtitle, backgroundImage }) => (
   </div>
 );
 
+// Helper function to generate dates that fall on a specific day of week
+const generateDatesForDayOfWeek = (startYear, endYear, dayOfWeek, count) => {
+  const dates = [];
+  
+  // Create a DateTime object for January 1st of the start year
+  let current = DateTime.local(startYear, 1, 1);
+  
+  // Move to the first occurrence of the desired day of week
+  while (current.weekday !== dayOfWeek) {
+    current = current.plus({ days: 1 });
+  }
+  
+  // Generate dates until we have enough or exceed the end year
+  while (dates.length < count && current.year <= endYear) {
+    dates.push(current.toISODate());
+    current = current.plus({ weeks: 1 });
+  }
+  
+  return dates;
+};
+
+// Helper function to generate monthly dates that fall on a specific day of week
+const generateMonthlyDatesForDayOfWeek = (startYear, endYear, dayOfWeek, weekOfMonth, count) => {
+  const dates = [];
+  
+  // Create a DateTime object for January 1st of the start year
+  let current = DateTime.local(startYear, 1, 1);
+  
+  // Generate dates until we have enough or exceed the end year
+  while (dates.length < count && current.year <= endYear) {
+    // Find the first occurrence of the day in the month
+    let targetDate = current.set({ day: 1 });
+    while (targetDate.weekday !== dayOfWeek) {
+      targetDate = targetDate.plus({ days: 1 });
+    }
+    
+    // Adjust to the specified week of the month (e.g., 4th Tuesday)
+    if (weekOfMonth > 1) {
+      targetDate = targetDate.plus({ weeks: weekOfMonth - 1 });
+      
+      // If this pushes us into the next month, use the last occurrence in the current month
+      if (targetDate.month !== current.month) {
+        targetDate = targetDate.minus({ weeks: 1 });
+      }
+    }
+    
+    // Add the date if it's still in the target year range
+    if (targetDate.year <= endYear && targetDate.year >= startYear) {
+      dates.push(targetDate.toISODate());
+    }
+    
+    // Move to the next month
+    current = current.plus({ months: 1 });
+  }
+  
+  return dates;
+};
+
 // Mock event data
 export const eventsData = [
-  // Recurring Events - Sunday Service (weekly)
-  ...Array.from({ length: 104 }, (_, i) => {
-    const startDate = new Date(2025, 0, 5); // First Sunday of 2025
-    startDate.setDate(startDate.getDate() + (i * 7)); // Add weeks
-    if (startDate.getFullYear() <= 2026) { // Only include 2025-2026
-      return {
-        id: `sunday-service-${i}`,
-        title: "Sunday Service",
-        date: startDate.toISOString().split('T')[0],
-        time: "10:00 AM",
-        location: "Copland Theater",
-        description: "Join us for our weekly worship service.",
-        image: "/images/Events/SundayService.jpg",
-        category: "Service"
-      };
-    }
-    return null;
-  }).filter(Boolean),
+  // Recurring Events - Sunday Service (weekly on Sundays)
+  ...generateDatesForDayOfWeek(2025, 2026, 7, 104).map((date, i) => ({
+    id: `sunday-service-${i}`,
+    title: "Sunday Service",
+    date: date,
+    time: "10:00 AM",
+    location: "Copland Theater",
+    description: "Join us for our weekly worship service.",
+    image: "/images/Events/SundayService.jpg",
+    category: "Service"
+  })),
 
-  // Recurring Events - Kids Church (weekly, same as Sunday Service)
-  ...Array.from({ length: 104 }, (_, i) => {
-    const startDate = new Date(2025, 0, 5); // First Sunday of 2025
-    startDate.setDate(startDate.getDate() + (i * 7)); // Add weeks
-    if (startDate.getFullYear() <= 2026) { // Only include 2025-2026
-      return {
-        id: `kids-church-${i}`,
-        title: "Kids Church",
-        date: startDate.toISOString().split('T')[0],
-        time: "10:00 AM",
-        location: "Kids Area",
-        description: "A special program for children with games, stories, and activities.",
-        image: "/images/Events/KidsChurch.jpg",
-        category: "Children"
-      };
-    }
-    return null;
-  }).filter(Boolean),
+  // Recurring Events - Kids Church (weekly on Sundays)
+  ...generateDatesForDayOfWeek(2025, 2026, 7, 104).map((date, i) => ({
+    id: `kids-church-${i}`,
+    title: "Kids Church",
+    date: date,
+    time: "10:00 AM",
+    location: "Kids Area",
+    description: "A special program for children with games, stories, and activities.",
+    image: "/images/Events/KidsChurch.jpg",
+    category: "Children"
+  })),
 
-  // Recurring Events - Encounter Night (monthly)
-  ...Array.from({ length: 24 }, (_, i) => {
-    const startDate = new Date(2025, 0, 28); // First Encounter Night - Jan 28, 2025
-    startDate.setMonth(startDate.getMonth() + i);
-    if (startDate.getFullYear() <= 2026) { // Only include 2025-2026
-      return {
-        id: `encounter-night-${i}`,
-        title: "Encounter Night",
-        date: startDate.toISOString().split('T')[0],
-        time: "07:00 PM",
-        location: "Vision Church",
-        description: "A night of extended worship and prayer.",
-        image: "/images/Events/Encounter Night.jpg",
-        category: "Worship"
-      };
-    }
-    return null;
-  }).filter(Boolean),
+  // Recurring Events - Encounter Night (monthly on the last Tuesday)
+  ...generateMonthlyDatesForDayOfWeek(2025, 2026, 2, 4, 24).map((date, i) => ({
+    id: `encounter-night-${i}`,
+    title: "Encounter Night",
+    date: date,
+    time: "07:00 PM",
+    location: "Vision Church",
+    description: "A night of extended worship and prayer.",
+    image: "/images/Events/Encounter Night.jpg",
+    category: "Worship"
+  })),
 
   // Recurring Events - Community Service (weekly on Saturdays)
-  ...Array.from({ length: 104 }, (_, i) => {
-    const startDate = new Date(2025, 0, 4); // First Saturday of 2025
-    startDate.setDate(startDate.getDate() + (i * 7)); // Add weeks
-    if (startDate.getFullYear() <= 2026) { // Only include 2025-2026
-      return {
-        id: `community-service-${i}`,
-        title: "Community Service",
-        date: startDate.toISOString().split('T')[0],
-        time: "10:00 AM",
-        location: "The Early Morning Centre",
-        description: "Serving our local community through various outreach projects.",
-        image: "/images/Events/Community Service.jpg",
-        category: "Service"
-      };
-    }
-    return null;
-  }).filter(Boolean),
+  ...generateDatesForDayOfWeek(2025, 2026, 6, 104).map((date, i) => ({
+    id: `community-service-${i}`,
+    title: "Community Service",
+    date: date,
+    time: "10:00 AM",
+    location: "The Early Morning Centre",
+    description: "Serving our local community through various outreach projects.",
+    image: "/images/Events/Community Service.jpg",
+    category: "Service"
+  })),
 
   // One-time Events
+  {
+    id: "church-camp-2025",
+    title: "Church Camp",
+    date: "2025-03-21",
+    endDate: "2025-03-23",
+    time: "All Day",
+    location: "Camp Cottermouth, Canberra",
+    description: "Three days of outdoor activities, fellowship, and spiritual growth for church families. Join us for worship, games, workshops, and more in a beautiful outdoor setting.",
+    image: "/images/Church Fire.jpg",
+    category: "Workshop",
+    isMultiDay: true
+  },
   {
     id: "womens-morning-tea-2025",
     title: "Women's Morning Tea",
@@ -149,13 +192,7 @@ export const eventsData = [
 
 // Date formatting function
 const formatDate = (date) => {
-  return new Intl.DateTimeFormat('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  }).format(date);
+  return DateTime.fromISO(date).setLocale('en').toLocaleString(DateTime.DATETIME_FULL);
 };
 
 // Calendar component
@@ -478,6 +515,30 @@ const Calendar = ({ events, onDateClick }) => {
 
 // Event list component
 const EventList = ({ events }) => {
+  // Format date for display
+  const formatDate = (event) => {
+    if (!event) return "";
+    
+    const startDate = DateTime.fromISO(event.date).setLocale('en').toLocaleString({
+      weekday: 'long',
+      month: 'long', 
+      day: 'numeric',
+      year: 'numeric'
+    });
+    
+    if (event.isMultiDay && event.endDate) {
+      const endDate = DateTime.fromISO(event.endDate).setLocale('en').toLocaleString({
+        weekday: 'long',
+        month: 'long', 
+        day: 'numeric',
+        year: 'numeric'
+      });
+      return `${startDate} - ${endDate}`;
+    }
+    
+    return `${startDate} at ${event.time}`;
+  };
+  
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
       {events.map(event => (
@@ -487,7 +548,7 @@ const EventList = ({ events }) => {
           </div>
           <div className="p-6">
             <div className="text-sm text-gray-600 mb-2">
-              {event.date} at {event.time}
+              {formatDate(event)}
             </div>
             <h3 className="text-xl font-semibold mb-2">{event.title}</h3>
             <p className="text-gray-600 mb-4">{event.description}</p>
@@ -499,9 +560,9 @@ const EventList = ({ events }) => {
             </div>
             <Link 
               to={`/events/${event.id}`} 
-              className="inline-block bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-900 transition duration-150"
+              className="text-gray-700 hover:text-black font-medium"
             >
-              Learn More
+              Learn More →
             </Link>
           </div>
         </div>

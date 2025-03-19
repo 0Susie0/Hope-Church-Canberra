@@ -1,6 +1,7 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { eventsData } from './Events';
+import { DateTime } from 'luxon';
 
 const EventDetails = () => {
   const { id } = useParams();
@@ -21,11 +22,11 @@ const EventDetails = () => {
     const allEventsOfType = eventsData.filter(e => e.id.includes(eventType));
     
     // Find future events of this type
-    const now = new Date();
-    const futureEvents = allEventsOfType.filter(e => new Date(e.date) >= now);
+    const now = DateTime.now().setLocale('en');
+    const futureEvents = allEventsOfType.filter(e => DateTime.fromISO(e.date).setLocale('en') >= now);
     
     // Sort by date (ascending) and get the nearest one
-    futureEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
+    futureEvents.sort((a, b) => DateTime.fromISO(a.date).setLocale('en') < DateTime.fromISO(b.date).setLocale('en') ? -1 : 1);
     event = futureEvents.length > 0 ? futureEvents[0] : allEventsOfType[0];
     
     // Set recurrence pattern based on event type
@@ -34,7 +35,7 @@ const EventDetails = () => {
     } else if (eventType === 'kids') {
       recurrencePattern = "Every Sunday at 10:00 AM";
     } else if (eventType === 'encounter') {
-      recurrencePattern = "Monthly on the last Tuesday at 7:00 PM";
+      recurrencePattern = "Last Tuesday of each month at 7:00 PM";
     } else if (eventType === 'community') {
       recurrencePattern = "Every Saturday at 10:00 AM";
     }
@@ -59,6 +60,39 @@ const EventDetails = () => {
     );
   }
 
+  // Format date for display
+  const formattedDate = DateTime.fromISO(event.date).setLocale('en').toLocaleString({
+    weekday: 'long',
+    month: 'long', 
+    day: 'numeric',
+    year: 'numeric'
+  });
+  
+  // Format end date for multi-day events
+  const formattedEndDate = event.endDate ? DateTime.fromISO(event.endDate).setLocale('en').toLocaleString({
+    weekday: 'long',
+    month: 'long', 
+    day: 'numeric',
+    year: 'numeric'
+  }) : null;
+  
+  // Format a full date string for display
+  const getFullDateString = (date, time, endDate = null) => {
+    const startDt = DateTime.fromISO(date).setLocale('en');
+    
+    if (endDate) {
+      const endDt = DateTime.fromISO(endDate).setLocale('en');
+      return `${startDt.toLocaleString({ weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })} - ${endDt.toLocaleString({ weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}`;
+    }
+    
+    return `${startDt.toLocaleString({ weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })} at ${time}`;
+  };
+
+  // Next occurrence formatting
+  const formattedNextOccurrence = DateTime.fromISO(event.date)
+    .setLocale('en')
+    .toLocaleString({ weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Hero Section with Event Image */}
@@ -73,12 +107,19 @@ const EventDetails = () => {
         </div>
         <div className="relative z-20 container mx-auto px-4 h-full flex items-center">
           <div className="text-white">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">{event.title}</h1>
-            {isRecurring && (
-              <div className="inline-block bg-blue-500 text-white text-sm font-semibold px-3 py-1 rounded-full mb-4">
-                Recurring Event
-              </div>
-            )}
+            <h1 className="text-white text-4xl md:text-5xl font-bold mb-4">{event.title}</h1>
+            <div className="mb-4">
+              {isRecurring && (
+                <div className="inline-block bg-blue-500 text-white text-sm font-semibold px-3 py-1 rounded-full mr-2">
+                  Recurring Event
+                </div>
+              )}
+              {event.isMultiDay && (
+                <div className="inline-block bg-green-500 text-white text-sm font-semibold px-3 py-1 rounded-full">
+                  Multi-day Event
+                </div>
+              )}
+            </div>
             <p className="text-xl text-gray-200">{event.description}</p>
           </div>
         </div>
@@ -106,12 +147,27 @@ const EventDetails = () => {
                         <span className="font-semibold">Recurring Schedule:</span> {recurrencePattern}
                       </p>
                       <p className="text-sm text-blue-700 mt-1">
-                        Next occurrence: {new Date(event.date).toLocaleDateString('en-US', { 
-                          weekday: 'long',
-                          year: 'numeric', 
-                          month: 'long', 
-                          day: 'numeric' 
-                        })}
+                        Next occurrence: {formattedNextOccurrence}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {event.isMultiDay && (
+                <div className="bg-green-50 border-l-4 border-green-400 p-4 mb-6">
+                  <div className="flex">
+                    <div className="flex-shrink-0">
+                      <svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <div className="ml-3">
+                      <p className="text-sm text-green-700">
+                        <span className="font-semibold">Event Duration:</span> {getFullDateString(event.date, event.time, event.endDate)}
+                      </p>
+                      <p className="text-sm text-green-700 mt-1">
+                        Please plan to attend the full event for the best experience.
                       </p>
                     </div>
                   </div>
@@ -180,6 +236,14 @@ const EventDetails = () => {
                     <li>An open heart and mind</li>
                     <li>Questions you may have</li>
                     <li>A friend who might benefit</li>
+                    {event.isMultiDay && (
+                      <>
+                        <li>Comfortable clothing for multiple days</li>
+                        <li>Toiletries and personal items</li>
+                        <li>Bible and journal</li>
+                        <li>Any medications you need</li>
+                      </>
+                    )}
                   </ul>
                 </div>
               )}
@@ -193,15 +257,17 @@ const EventDetails = () => {
                 <div>
                   <h4 className="text-sm font-medium text-gray-500">Date & Time</h4>
                   {isRecurring ? (
-                    <p className="text-gray-800">{recurrencePattern}</p>
+                    <div>
+                      <p className="text-gray-800">{recurrencePattern}</p>
+                      <p className="text-gray-800 mt-1">Next: {formattedNextOccurrence}</p>
+                    </div>
+                  ) : event.isMultiDay ? (
+                    <p className="text-gray-800">
+                      {getFullDateString(event.date, event.time, event.endDate)}
+                    </p>
                   ) : (
                     <p className="text-gray-800">
-                      {new Date(event.date).toLocaleDateString('en-US', { 
-                        weekday: 'long',
-                        year: 'numeric', 
-                        month: 'long', 
-                        day: 'numeric' 
-                      })} at {event.time}
+                      {getFullDateString(event.date, event.time)}
                     </p>
                   )}
                 </div>
