@@ -154,9 +154,12 @@ const LifeGroupsSection = () => {
         
         <div className="text-center mt-12">
           <p className="text-gray-700 mb-6">Want to join a life group or learn more?</p>
-          <Link to="/contact" className="bg-gray-700 hover:bg-gray-800 text-white font-bold py-3 px-8 rounded-lg transition duration-300">
+          <a 
+            href="mailto:info@hopechurchcanberra.com.au?subject=Life%20Group%20Inquiry" 
+            className="bg-gray-700 hover:bg-gray-800 text-white font-bold py-3 px-8 rounded-lg transition duration-300 inline-block"
+          >
             Contact Us
-          </Link>
+          </a>
         </div>
       </div>
     </div>
