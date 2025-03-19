@@ -1,55 +1,73 @@
 # Hope Church Canberra Website
 
-This is the prototype project for the Hope Church Canberra website, built with React and Node.js.
+A modern, responsive website for Hope Church Canberra built with React.
 
-## Project Overview
+## Overview
 
-The website prototype includes the following core features and pages:
+This website serves as the online presence for Hope Church Canberra, providing information about the church, its services, events, and community groups. It features a clean, modern design optimized for all devices.
 
-### Core Pages
-1. **Home Page**
-   - Full-width hero image showcasing church mission and core information
-   - Service times, location, and upcoming events preview
-   - Prominent call-to-action buttons (e.g., "Join Us", "Learn More")
+## Features
 
-2. **About Us**
-   - Church history, mission, and core values
-   - Team introduction
+- **Home Page**: Church introduction, upcoming events, service times, and testimonials
+- **About Page**: Vision, core values, statement of faith, and leadership information
+- **Events Page**: Calendar and list views of church events with filtering capabilities
+- **Life Groups Page**: Information about small community groups with contact options
+- **Responsive Design**: Optimized for mobile, tablet, and desktop viewing
 
-3. **Life Groups/Core Values**
-   - Life group details
-   - Church core values display
+## Technologies Used
 
-4. **Events & Calendar**
-   - Event list display
-   - Interactive calendar module
-   - Search and filter functionality
+- React
+- React Router for navigation
+- Tailwind CSS for styling
+- Luxon for date manipulation
+- Modern JavaScript (ES6+)
 
-5. **Visit Us**
-   - Clear location information
-   - Multimedia elements (image carousel, video, community stories)
+## Project Structure
 
-### Features
+```
+Hope Church Canberra/
+├── public/                 # Public assets
+│   ├── images/             # Image files
+│   ├── videos/             # Video files
+│   └── data/               # Static data files
+├── src/                    # Source code
+│   ├── components/         # Reusable React components
+│   ├── pages/              # Page components
+│   ├── styles/             # CSS and style-related files
+│   ├── utils/              # Utility functions and helpers
+│   ├── App.jsx             # Main application component
+│   └── main.jsx            # Application entry point
+└── ...                     # Configuration files
+```
 
-- **Fixed Navigation Bar**: Global fixed header ensuring users can access all modules at any time
-- **Responsive Layout**: Automatically adapts to various device sizes (desktop and mobile)
-- **Social Media Integration**: Embedded social media dynamic content
-- **Event Calendar**: Interactive calendar component supporting month, week, and day views
-- **Multimedia Support**: Support for images, videos, and document embedding
+## Key Components
 
-## Tech Stack
+### Pages
 
-- **Frontend**: React, React Router
-- **Styling**: CSS/SCSS, Bootstrap or Tailwind CSS
-- **Backend**: Node.js, Express
-- **Data Storage**: Local JSON files for data simulation in this prototype phase
+- **Home.jsx**: Landing page with hero section, service info, upcoming events, and testimonials
+- **About.jsx**: Information about church vision, values, and leadership
+- **Events.jsx**: Calendar and list views of church events with filtering
+- **LifeGroups.jsx**: Information about small community groups
+- **EventDetails.jsx**: Detailed information about specific events
 
-## Installation
+### Shared Components
+
+- **PageHeader**: Common header used across various pages
+- **Navigation**: Site-wide navigation menu
+
+## Setup and Development
+
+### Prerequisites
+
+- Node.js (v14+)
+- npm or yarn
+
+### Installation
 
 1. Clone the repository
    ```
-   git clone [repository URL]
-   cd hope-church-canberra
+   git clone [repository-url]
+   cd Hope\ Church\ Canberra/
    ```
 
 2. Install dependencies
@@ -57,43 +75,27 @@ The website prototype includes the following core features and pages:
    npm install
    ```
 
-3. Start development server
+3. Start the development server
    ```
    npm run dev
    ```
 
-4. Build for production
-   ```
-   npm run build
-   ```
+4. Open your browser to `http://localhost:5173` (or the port shown in your terminal)
 
-## Project Structure
+## Building for Production
+
+To create a production build:
 
 ```
-hope-church-canberra/
-├── public/               # Static assets
-│   ├── images/           # Image resources
-│   └── data/             # Mock data JSON files
-├── src/                  # Source code
-│   ├── components/       # React components
-│   ├── pages/            # Page components
-│   ├── hooks/            # Custom hooks
-│   ├── contexts/         # React contexts
-│   ├── utils/            # Utility functions
-│   ├── styles/           # Global styles
-│   └── App.js            # Main application component
-├── package.json          # Project dependencies and scripts
-└── README.md             # Project documentation
+npm run build
 ```
 
-## Future Development Plans
+The build files will be generated in the `dist/` directory.
 
-1. Integrate real database to replace mock data
-2. Add user authentication functionality
-3. Implement event registration and management system
-4. Add admin dashboard interface
-5. Optimize performance and user experience
+## Contact
+
+For questions or inquiries about the website, please contact [info@hopechurchcanberra.com.au](mailto:info@hopechurchcanberra.com.au).
 
 ## License
 
-[To be determined] 
+This project is privately owned by Hope Church Canberra. 
