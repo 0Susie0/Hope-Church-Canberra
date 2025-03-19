@@ -80,7 +80,7 @@ const ImageCarousel = () => {
     {
       id: 2,
       image: '/images/Thrive.jpg',
-      title: 'Youth Ministry',
+      title: 'Oceania Conference',
       description: 'Empowering the next generation'
     },
     {
@@ -92,13 +92,13 @@ const ImageCarousel = () => {
     {
       id: 4,
       image: '/images/Connection.jpg',
-      title: 'Community',
+      title: 'Connection',
       description: 'Growing together in Christ'
     },
     {
       id: 5,
       image: '/images/Prophetic Dancing.jpg',
-      title: 'Creative Arts',
+      title: 'Prophetic Dance',
       description: 'Expressing worship through various art forms'
     }
   ];
