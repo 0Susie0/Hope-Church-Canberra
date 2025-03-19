@@ -230,21 +230,55 @@ const EventDetails = () => {
 
               {event.category === "Workshop" && (
                 <div className="bg-gray-50 rounded-lg p-6 mb-6">
-                  <h3 className="text-lg font-semibold mb-3">What to Bring</h3>
-                  <ul className="list-disc list-inside text-gray-600 space-y-2">
-                    <li>A notebook and pen</li>
-                    <li>An open heart and mind</li>
-                    <li>Questions you may have</li>
-                    <li>A friend who might benefit</li>
-                    {event.isMultiDay && (
-                      <>
-                        <li>Comfortable clothing for multiple days</li>
-                        <li>Toiletries and personal items</li>
-                        <li>Bible and journal</li>
-                        <li>Any medications you need</li>
-                      </>
-                    )}
-                  </ul>
+                  {/* If it's the Women's Fellowship event */}
+                  {event.id.includes("womens-fellowship") && event.detailedInfo && (
+                    <>
+                      <h3 className="text-lg font-semibold mb-3">What to Expect 🌟</h3>
+                      <ul className="list-disc list-inside text-gray-600 space-y-2 mb-6">
+                        {event.detailedInfo.expectations.map((item, index) => (
+                          <li key={index}>{item}</li>
+                        ))}
+                      </ul>
+                      
+                      <h3 className="text-lg font-semibold mb-3">What to Bring 🎁</h3>
+                      <ul className="list-disc list-inside text-gray-600 space-y-2 mb-4">
+                        {event.detailedInfo.toBring.map((item, index) => (
+                          <li key={index}>{item}</li>
+                        ))}
+                      </ul>
+                      
+                      {event.detailedInfo.notes && (
+                        <p className="text-gray-600 italic">{event.detailedInfo.notes}</p>
+                      )}
+                    </>
+                  )}
+                  
+                  {/* If it's the Church Camp event */}
+                  {event.id.includes("church-camp") && event.detailedInfo && (
+                    <>
+                      <h3 className="text-lg font-semibold mb-3">What to Expect</h3>
+                      <div className="mb-6">
+                        <h4 className="font-medium text-gray-800 mb-2">Spiritual Growth & Reflection</h4>
+                        <ul className="list-disc list-inside text-gray-600 space-y-1 ml-2 mb-4">
+                          <li>Engage in Bible study and writing activities</li>
+                          <li>Participate in the <strong>"Recapture"</strong> themed <strong>Lifegroup Skit</strong></li>
+                        </ul>
+                        
+                        <h4 className="font-medium text-gray-800 mb-2">Fellowship & Connection</h4>
+                        <ul className="list-disc list-inside text-gray-600 space-y-1 ml-2 mb-4">
+                          <li>Enjoy shared moments through the <strong>Guardian Angel</strong> activity</li>
+                          <li>Bond with others during campfire night skits, discussions, and games</li>
+                        </ul>
+                        
+                        <h4 className="font-medium text-gray-800 mb-2">Comfort & Fun</h4>
+                        <ul className="list-disc list-inside text-gray-600 space-y-1 ml-2">
+                          <li>Bring comfortable clothing, outdoor sports gear, and snacks</li>
+                          <li>Enjoy craft tables, book exchanges, and team games</li>
+                        </ul>
+                      </div>
+                    </>
+                  )}
+                  
                 </div>
               )}
             </div>

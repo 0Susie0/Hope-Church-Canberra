@@ -82,10 +82,14 @@ const generateMonthlyDatesForDayOfWeek = (startYear, endYear, dayOfWeek, weekOfM
   return dates;
 };
 
+// Get current year and next year
+const currentYear = DateTime.now().year;
+const nextYear = currentYear + 1;
+
 // Mock event data
 export const eventsData = [
   // Recurring Events - Sunday Service (weekly on Sundays)
-  ...generateDatesForDayOfWeek(2025, 2026, 7, 104).map((date, i) => ({
+  ...generateDatesForDayOfWeek(currentYear, nextYear, 7, 104).map((date, i) => ({
     id: `sunday-service-${i}`,
     title: "Sunday Service",
     date: date,
@@ -97,7 +101,7 @@ export const eventsData = [
   })),
 
   // Recurring Events - Kids Church (weekly on Sundays)
-  ...generateDatesForDayOfWeek(2025, 2026, 7, 104).map((date, i) => ({
+  ...generateDatesForDayOfWeek(currentYear, nextYear, 7, 104).map((date, i) => ({
     id: `kids-church-${i}`,
     title: "Kids Church",
     date: date,
@@ -109,7 +113,7 @@ export const eventsData = [
   })),
 
   // Recurring Events - Encounter Night (monthly on the last Tuesday)
-  ...generateMonthlyDatesForDayOfWeek(2025, 2026, 2, 4, 24).map((date, i) => ({
+  ...generateMonthlyDatesForDayOfWeek(currentYear, nextYear, 2, 24).map((date, i) => ({
     id: `encounter-night-${i}`,
     title: "Encounter Night",
     date: date,
@@ -121,7 +125,7 @@ export const eventsData = [
   })),
 
   // Recurring Events - Community Service (weekly on Saturdays)
-  ...generateDatesForDayOfWeek(2025, 2026, 6, 104).map((date, i) => ({
+  ...generateDatesForDayOfWeek(currentYear, nextYear, 6, 104).map((date, i) => ({
     id: `community-service-${i}`,
     title: "Community Service",
     date: date,
@@ -132,61 +136,72 @@ export const eventsData = [
     category: "Service"
   })),
 
-  // One-time Events
+  // Annual Events (occur once per year)
   {
-    id: "church-camp-2025",
+    id: `church-camp-${currentYear}`,
     title: "Church Camp",
-    date: "2025-03-21",
-    endDate: "2025-03-23",
+    date: `${currentYear}-03-21`,
+    endDate: `${currentYear}-03-23`,
     time: "All Day",
-    location: "Camp Cottermouth, Canberra",
-    description: "Three days of outdoor activities, fellowship, and spiritual growth for church families. Join us for worship, games, workshops, and more in a beautiful outdoor setting.",
+    location: "Warrambui Retreat and Conference Centre",
+    description: "Three days of outdoor activities, fellowship, and spiritual growth for church families.",
     image: "/images/Church Fire.jpg",
     category: "Workshop",
-    isMultiDay: true
+    isMultiDay: true,
+    detailedInfo: {
+      expectations: [
+        "Spiritual Growth & Reflection - Bible study and writing activities",
+        "Participate in the 'Recapture' themed Lifegroup Skit",
+        "Fellowship & Connection through Guardian Angel activity",
+        "Campfire night skits, discussions, and games",
+        "Comfortable clothing, outdoor sports gear, and snacks for casual social times"
+      ]
+    }
   },
   {
-    id: "womens-morning-tea-2025",
+    id: `womens-fellowship-${currentYear}`,
     title: "Women's Morning Tea",
-    date: "2025-03-01",
+    date: `${currentYear}-03-01`,
     time: "10:00 AM",
-    location: "Rotate in different locations",
-    description: "A time of fellowship and encouragement for women.",
+    location: "Deakin",
+    description: "Join us for our first-ever Women's Fellowship — a time to connect, recharge, and grow in faith over warm drinks and heartfelt conversations.",
     image: "/images/Events/Women's Morning Tea.jpg",
-    category: "Workshop"
+    category: "Workshop",
+    detailedInfo: {
+      expectations: [
+        "Drinks, light bites & laughter",
+        "Craft tables, women leadership videos, book exchange, and conversation games",
+        "Special beauty voucher gifts for participants in sharing & games"
+      ],
+      toBring: [
+        "Garden party attire",
+        "Wisdom and stories to share",
+        "Curious life questions for games",
+        "Devotional books on faith or women's topics for exchange"
+      ],
+      notes: "Kids and fluffy pets are welcome."
+    }
   },
   {
-    id: "water-baptism-2025",
+    id: `water-baptism-${currentYear}`,
     title: "Water Baptism",
-    date: "2025-02-19",
+    date: `${currentYear}-02-19`,
     time: "06:00 PM",
     location: "Depends on the weather",
     description: "Witness and celebrate new believers taking their next step in faith.",
     image: "/images/Events/WaterBaptism.jpg",
     category: "Service"
   },
-  // Heaven Invade Worship Concert (yearly placeholder)
+  // Heaven Invade Worship Concert
   {
-    id: "heaven-invade-2025",
+    id: `heaven-invade-${nextYear}`,
     title: "Heaven Invade Worship Concert",
-    date: "2025-07-01", // Placeholder date
-    time: "TBA",
-    location: "T2 Kambri",
-    description: "A special concert of worship and praise with our worship team. Date to be announced.",
+    date: "TBC",
+    time: "07:00 PM",
+    location: "Kambri Cultural Centre",
+    description: "A special concert of worship and praise with our worship team.",
     image: "/images/Worship3.jpg",
-    category: "Worship",
-    isPlaceholder: true
-  },
-  {
-    id: "heaven-invade-2026",
-    title: "Heaven Invade Worship Concert",
-    date: "2026-01-01", // Placeholder date
-    time: "TBA",
-    location: "T2 Kambri",
-    description: "A special concert of worship and praise with our worship team. Date to be announced.",
-    image: "/images/Worship3.jpg",
-    category: "Worship",
-    isPlaceholder: true
+    category: "Worship"
   }
 ];
 
@@ -197,7 +212,7 @@ const formatDate = (date) => {
 
 // Calendar component
 const Calendar = ({ events, onDateClick }) => {
-  const [currentDate, setCurrentDate] = useState(new Date(2025, 0, 1)); // Start from 2025
+  const [currentDate, setCurrentDate] = useState(new Date(currentYear, 0, 1)); // Start from current year
   const [currentView, setCurrentView] = useState('month'); // 'month', 'week', 'day'
   
   // Pre-process events to only include nearest future occurrences of recurring events
@@ -342,17 +357,17 @@ const Calendar = ({ events, onDateClick }) => {
     const newDate = new Date(currentDate);
     if (currentView === 'month') {
       newDate.setMonth(newDate.getMonth() - 1);
-      if (newDate.getFullYear() >= 2025) {
+      if (newDate.getFullYear() >= currentYear) {
         setCurrentDate(newDate);
       }
     } else if (currentView === 'week') {
       newDate.setDate(newDate.getDate() - 7);
-      if (newDate.getFullYear() >= 2025) {
+      if (newDate.getFullYear() >= currentYear) {
         setCurrentDate(newDate);
       }
     } else if (currentView === 'day') {
       newDate.setDate(newDate.getDate() - 1);
-      if (newDate.getFullYear() >= 2025) {
+      if (newDate.getFullYear() >= currentYear) {
         setCurrentDate(newDate);
       }
     }
@@ -363,17 +378,17 @@ const Calendar = ({ events, onDateClick }) => {
     const newDate = new Date(currentDate);
     if (currentView === 'month') {
       newDate.setMonth(newDate.getMonth() + 1);
-      if (newDate.getFullYear() <= 2026) {
+      if (newDate.getFullYear() <= nextYear) {
         setCurrentDate(newDate);
       }
     } else if (currentView === 'week') {
       newDate.setDate(newDate.getDate() + 7);
-      if (newDate.getFullYear() <= 2026) {
+      if (newDate.getFullYear() <= nextYear) {
         setCurrentDate(newDate);
       }
     } else if (currentView === 'day') {
       newDate.setDate(newDate.getDate() + 1);
-      if (newDate.getFullYear() <= 2026) {
+      if (newDate.getFullYear() <= nextYear) {
         setCurrentDate(newDate);
       }
     }
@@ -499,7 +514,7 @@ const Calendar = ({ events, onDateClick }) => {
           </button>
         </div>
         <button 
-          onClick={() => setCurrentDate(new Date(2025, 0, 1))} 
+          onClick={() => setCurrentDate(new Date(currentYear, 0, 1))} 
           className="px-4 py-2 bg-gray-200 text-gray-700 rounded"
         >
           Reset View
