@@ -32,7 +32,7 @@ const OurVision = () => (
       
       <div className="max-w-4xl mx-auto">
         <div className="bg-gray-50 p-8 rounded-lg shadow-md">
-          <p className="text-xl text-center text-gray-800 mb-6">
+          <p className="text-xl text-center text-justify text-gray-800 mb-6">
             Fulfilling the Great Commission by raising Christ-centred Disciples to plant Vibrant, Bible based Churches in Canberra, Australia and all over the world
           </p>
         </div>
@@ -47,7 +47,7 @@ const CoreValues = () => (
       <div className="text-center mb-12">
         <h2 className="text-3xl font-bold mb-2">Core Values</h2>
         <div className="w-20 h-1 bg-black mx-auto mb-6"></div>
-        <p className="text-gray-700 max-w-4xl mx-auto mb-8">
+        <p className="text-gray-700 max-w-4xl mx-auto mb-8 text-justify">
           We are Christ-centred, Holy Spirit empowered, Bible based and covenantal people;
           a life-enriching community, who are vision driven disciple makers, leadership trainers and
           church planters who belong to an apostolic movement.
@@ -152,44 +152,44 @@ const CoreValues = () => (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
               <h5 className="text-lg font-medium mb-2 text-gray-800 border-l-4 border-gray-800 pl-3">THE BIBLE</h5>
-              <p className="text-gray-700 mb-6">
+              <p className="text-gray-700 mb-6 text-justify">
                 We believe in every word of the Old and New Testaments as originally given, and that God inspired humans to write it without error. The Bible is the Word of God. It is the absolute truth and therefore is the standard of faith as well as the ultimate handbook for every aspect in a believer's life.
               </p>
               
               <h5 className="text-lg font-medium mb-2 text-gray-800 border-l-4 border-gray-800 pl-3">GOD</h5>
-              <p className="text-gray-700 mb-6">
+              <p className="text-gray-700 mb-6 text-justify">
                 We believe in the one true and eternal God, the Creator of everything. God is one but exists in three persons: the Father, the Son and the Holy Spirit. Though they are co-equal, coexistent and co-eternal, they play different roles in human history, working together in creation, revelation, redemption and the final judgment.
               </p>
               
               <h5 className="text-lg font-medium mb-2 text-gray-800 border-l-4 border-gray-800 pl-3">JESUS CHRIST</h5>
-              <p className="text-gray-700 mb-6">
+              <p className="text-gray-700 mb-6 text-justify">
                 We believe in Jesus Christ, the Son of God, who was supernaturally conceived by the power of the Holy Spirit and born of the virgin Mary. Whilst on earth, He was both perfectly God and perfectly man at the same time, and was without sin. He was crucified on the cross and physically rose from the dead on the third day to fulfil the will of the Father to provide salvation from sin to those who believe in Him.
               </p>
               
               <h5 className="text-lg font-medium mb-2 text-gray-800 border-l-4 border-gray-800 pl-3">HOLY SPIRIT</h5>
-              <p className="text-gray-700 mb-6">
+              <p className="text-gray-700 mb-6 text-justify">
                 We believe that the Holy Spirit is God who convicts people of sin and leads them to repent of their sin and place their faith in Jesus for salvation. He dwells within believers to enable them to lead holy lives and obey God's will. We believe that all the gifts of the Holy Spirit mentioned in the Bible remain in the Church today and should be fully exercised to build up the Body of Christ.
               </p>
             </div>
             
             <div>
               <h5 className="text-lg font-medium mb-2 text-gray-800 border-l-4 border-gray-800 pl-3">SALVATION</h5>
-              <p className="text-gray-700 mb-6">
+              <p className="text-gray-700 mb-6 text-justify">
                 We believe that we can be saved from God's wrath when we confess and repent from sin and place our trust in Jesus Christ. Salvation is given by the grace of God only on the basis of Jesus' sacrifice for sin when He died on the cross and cannot be achieved by a person's own works. At the point of salvation, an individual becomes a new creation in Christ.
               </p>
               
               <h5 className="text-lg font-medium mb-2 text-gray-800 border-l-4 border-gray-800 pl-3">THE CHURCH</h5>
-              <p className="text-gray-700 mb-6">
+              <p className="text-gray-700 mb-6 text-justify">
                 We believe that the church is the community of God's people and central to God's plan of salvation. Once we become Christians, we are adopted into God's family and become part of the Universal Church, made up of Christians of every age. Local churches are made up of believers who regularly meet together in different localities to worship, listen to the Word of God, fellowship, witness, participate in communion, pray and have other activities together.
               </p>
               
               <h5 className="text-lg font-medium mb-2 text-gray-800 border-l-4 border-gray-800 pl-3">BAPTISM AND COMMUNION</h5>
-              <p className="text-gray-700 mb-6">
+              <p className="text-gray-700 mb-6 text-justify">
                 We believe that all Christians should be water baptized in obedience to Jesus' command and as a public testimony of their commitment to follow Him. Water baptism is the immersion of a person completely in water as a symbol of the death, burial and resurrection of Jesus. Communion is for Christians to remember Jesus by partaking of bread and wine as symbols of the flesh and blood of Jesus and the covenant God has made to bring salvation through faith in Christ.
               </p>
               
               <h5 className="text-lg font-medium mb-2 text-gray-800 border-l-4 border-gray-800 pl-3">WORSHIP</h5>
-              <p className="text-gray-700 mb-6">
+              <p className="text-gray-700 mb-6 text-justify">
                 We believe that Christians must worship the Lord in spirit and in truth. Worship is acknowledging the worthiness of God and opening our hearts to relate to Him. Worshiping according to Biblical patterns allows us to use outward expression to come close to God. Some of these expressions of worship include worshiping with other Christians, using musical instruments, singing and exercising the gifts of the Holy Spirit.
               </p>
             </div>
@@ -219,7 +219,7 @@ const OurLeaders = () => (
           </div>
           <div className="md:w-1/2">
             <h3 className="text-2xl font-semibold mb-2">Local Pastor: Patrick & Sarah Ching</h3>
-            <p className="text-gray-700 mb-4">
+            <p className="text-gray-700 mb-4 text-justify">
               Patrick & Sarah have been serving in Hope Churches for more than 15 years. They relocated to Canberra in 2012 and took over the leadership of the church at the beginning of 2014. Patrick is also working as an IT Professional and Sarah is a stay home mum taking care of their boys, David and Gabriel.
             </p>
           </div>

@@ -46,10 +46,10 @@ const ServiceInfo = () => (
         <div className="w-20 h-1 bg-black mx-auto"></div>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 max-w-4xl mx-auto">
         <div className="bg-gray-50 p-6 rounded-lg shadow-md">
           <h3 className="text-xl font-semibold mb-3 text-gray-900">Sunday Service</h3>
-          <p className="mb-2 text-gray-700">10:00 AM - 12:30 AM</p>
+          <p className="mb-2 text-gray-700">Sunday 10:00 AM - 12:30 PM</p>
           <p className="text-gray-700">Copland Lecture Theatre
 The Australian National University
 25a Kingsley St, Acton ACT</p>
@@ -57,10 +57,11 @@ The Australian National University
         
         <div className="bg-gray-50 p-6 rounded-lg shadow-md">
           <h3 className="text-xl font-semibold mb-3 text-gray-900">Kids Church</h3>
-          <p className="mb-2 text-gray-700">Sunday 10:00 AM - 12:30 AM</p>
-          <p className="text-gray-700">Youth Activity Center</p>
+          <p className="mb-2 text-gray-700">Sunday 10:00 AM - 12:30 PM</p>
+          <p className="text-gray-700">Copland Lecture Theatre
+The Australian National University
+25a Kingsley St, Acton ACT</p>
         </div>
-        
       </div>
     </div>
   </div>
@@ -116,7 +117,7 @@ const ImageCarousel = () => {
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold mb-2 text-gray-900">Our Church</h2>
           <div className="w-20 h-1 bg-black mx-auto mb-4"></div>
-          <p className="text-gray-600 max-w-2xl mx-auto">
+          <p className="text-gray-600 max-w-2xl mx-auto text-justify">
            Hope Church Canberra is a multicultural, vibrant, Spirit-filled community who love God and people. We are firm believers that the church is not a building but a community of people who share lives together and we would love to welcome you!  Our main worship service is held on Sunday mornings in Canberra city, 10 minutes walk from Canberra Centre.  We seek to be a community of Christ centred believers that are inspired by God's Word and Presence!
           </p>
         </div>
@@ -256,7 +257,7 @@ const UpcomingEvents = () => {
             <div className="p-6">
               <div className="text-sm text-gray-600 mb-2">{formatDate(nextChurchCamp)}</div>
               <h3 className="text-xl font-semibold mb-2 text-gray-900">Church Camp</h3>
-              <p className="text-gray-600 mb-4">Three days of outdoor activities, fellowship, and spiritual growth for the church families.</p>
+              <p className="text-gray-600 mb-4 text-justify">Three days of outdoor activities, fellowship, and spiritual growth for the church families.</p>
               <Link to="/events/church-camp-2025" className="text-gray-700 hover:text-black font-medium">
                 Learn More →
               </Link>
@@ -270,7 +271,7 @@ const UpcomingEvents = () => {
             <div className="p-6">
               <div className="text-sm text-gray-600 mb-2">{formatDate(nextEncounterNight)}</div>
               <h3 className="text-xl font-semibold mb-2 text-gray-900">Encounter Night</h3>
-              <p className="text-gray-600 mb-4">A night of extended worship and prayer.</p>
+              <p className="text-gray-600 mb-4 text-justify">A night of extended worship and prayer.</p>
               <Link to="/events/encounter-night-0" className="text-gray-700 hover:text-black font-medium">
                 Learn More →
               </Link>
@@ -284,7 +285,7 @@ const UpcomingEvents = () => {
             <div className="p-6">
               <div className="text-sm text-gray-600 mb-2">{formatDate(nextCommunityService)}</div>
               <h3 className="text-xl font-semibold mb-2 text-gray-900">Community Service</h3>
-              <p className="text-gray-600 mb-4">Join us in serving our local community through various outreach projects.</p>
+              <p className="text-gray-600 mb-4 text-justify">Join us in serving our local community through various outreach projects.</p>
               <Link to="/events/community-service-0" className="text-gray-700 hover:text-black font-medium">
                 Learn More →
               </Link>
@@ -330,7 +331,7 @@ const CommunityStories = () => {
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold mb-2 text-gray-900">Community Stories</h2>
           <div className="w-20 h-1 bg-black mx-auto mb-4"></div>
-          <p className="text-gray-600 max-w-2xl mx-auto">
+          <p className="text-gray-600 max-w-2xl mx-auto text-justify">
             Hear stories from our community members about their experiences and feelings at Hope Church.
           </p>
         </div>
