@@ -94,7 +94,7 @@ The build files will be generated in the `dist/` directory.
 
 ## Contact
 
-For questions or inquiries about the website, please contact [info@hopechurchcanberra.com.au](mailto:info@hopechurchcanberra.com.au).
+For questions or inquiries about the website, please contact [SusieHu98@outlook.com](mailto:SusieHu98@outlook.com).
 
 ## License
 

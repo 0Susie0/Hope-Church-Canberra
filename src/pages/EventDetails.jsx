@@ -21,13 +21,21 @@ const EventDetails = () => {
     // Find all events of this type
     const allEventsOfType = eventsData.filter(e => e.id.includes(eventType));
     
-    // Find future events of this type
+    // Find future events of this type (only for events with dates)
     const now = DateTime.now().setLocale('en');
-    const futureEvents = allEventsOfType.filter(e => DateTime.fromISO(e.date).setLocale('en') >= now);
+    const futureEvents = allEventsOfType.filter(e => 
+      e.date && DateTime.fromISO(e.date).setLocale('en') >= now
+    );
     
     // Sort by date (ascending) and get the nearest one
-    futureEvents.sort((a, b) => DateTime.fromISO(a.date).setLocale('en') < DateTime.fromISO(b.date).setLocale('en') ? -1 : 1);
-    event = futureEvents.length > 0 ? futureEvents[0] : allEventsOfType[0];
+    if (futureEvents.length > 0) {
+      futureEvents.sort((a, b) => 
+        DateTime.fromISO(a.date).setLocale('en') < DateTime.fromISO(b.date).setLocale('en') ? -1 : 1
+      );
+      event = futureEvents[0];
+    } else {
+      event = allEventsOfType[0];
+    }
     
     // Set recurrence pattern based on event type
     if (eventType === 'sunday') {
@@ -37,7 +45,7 @@ const EventDetails = () => {
     } else if (eventType === 'encounter') {
       recurrencePattern = "Last Tuesday of each month at 7:00 PM";
     } else if (eventType === 'community') {
-      recurrencePattern = "Every Saturday at 10:00 AM";
+      recurrencePattern = "Monthly on Saturdays";
     }
   } else {
     // Non-recurring event - find exact match
@@ -61,12 +69,12 @@ const EventDetails = () => {
   }
 
   // Format date for display
-  const formattedDate = DateTime.fromISO(event.date).setLocale('en').toLocaleString({
+  const formattedDate = event.date ? DateTime.fromISO(event.date).setLocale('en').toLocaleString({
     weekday: 'long',
     month: 'long', 
     day: 'numeric',
     year: 'numeric'
-  });
+  }) : "Date and time to be announced";
   
   // Format end date for multi-day events
   const formattedEndDate = event.endDate ? DateTime.fromISO(event.endDate).setLocale('en').toLocaleString({
@@ -78,6 +86,8 @@ const EventDetails = () => {
   
   // Format a full date string for display
   const getFullDateString = (date, time, endDate = null) => {
+    if (!date) return "Date and time to be announced";
+    
     const startDt = DateTime.fromISO(date).setLocale('en');
     
     if (endDate) {
@@ -89,9 +99,11 @@ const EventDetails = () => {
   };
 
   // Next occurrence formatting
-  const formattedNextOccurrence = DateTime.fromISO(event.date)
-    .setLocale('en')
-    .toLocaleString({ weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+  const formattedNextOccurrence = event.date ? 
+    DateTime.fromISO(event.date)
+      .setLocale('en')
+      .toLocaleString({ weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })
+    : "Date and time to be announced";
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -154,6 +166,23 @@ const EventDetails = () => {
                 </div>
               )}
               
+              {!event.date && (
+                <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
+                  <div className="flex">
+                    <div className="flex-shrink-0">
+                      <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <div className="ml-3">
+                      <p className="text-sm text-yellow-700">
+                        For further information please contact us via <a href="https://www.facebook.com/HopeCanberra" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Facebook</a>.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
               {event.isMultiDay && (
                 <div className="bg-green-50 border-l-4 border-green-400 p-4 mb-6">
                   <div className="flex">
@@ -184,7 +213,7 @@ const EventDetails = () => {
                     </div>
                     <div className="ml-3">
                       <p className="text-sm text-yellow-700">
-                        Note: The exact date and time for this event will be announced later.
+                        For further information please contact us via <a href="https://www.facebook.com/HopeCanberra" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Facebook</a>.
                       </p>
                     </div>
                   </div>
@@ -261,7 +290,7 @@ const EventDetails = () => {
                         <h4 className="font-medium text-gray-800 mb-2">Spiritual Growth & Reflection</h4>
                         <ul className="list-disc list-inside text-gray-600 space-y-1 ml-2 mb-4">
                           <li>Engage in Bible study and writing activities</li>
-                          <li>Participate in the <strong>"Recapture"</strong> themed <strong>Lifegroup Skit</strong></li>
+                          <li>Participate in the themed <strong>Lifegroup Skit</strong></li>
                         </ul>
                         
                         <h4 className="font-medium text-gray-800 mb-2">Fellowship & Connection</h4>

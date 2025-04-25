@@ -6,8 +6,8 @@ import { DateTime } from 'luxon';
 const HeroSection = () => (
   <div className="relative h-screen overflow-hidden">
     {/* Video overlay for darkening the video */}
-    <div className="absolute inset-0 bg-black opacity-30 z-10"></div>
-    <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black opacity-80 z-10"></div>
+    <div className="absolute inset-0 bg-black opacity-10 z-10"></div>
+    <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black opacity-5 z-10"></div>
     
     {/* Video background */}
     <video 
@@ -24,15 +24,7 @@ const HeroSection = () => (
     
     {/* Content overlay */}
     <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white px-4 z-20">
-      <h1 className="text-4xl md:text-6xl font-bold mb-4 text-white">Hope Church Canberra</h1>
-      <p className="text-xl md:text-2xl mb-8 text-gray-100">Faith, Community, Hope</p>
       <div className="flex flex-wrap justify-center gap-4">
-        <Link to="/visit" className="bg-white hover:bg-gray-200 text-black font-bold py-3 px-6 rounded-lg transition duration-300">
-          Join Us
-        </Link>
-        <Link to="/about" className="bg-transparent hover:bg-white hover:text-black text-white font-bold py-3 px-6 rounded-lg border-2 border-white transition duration-300">
-          Learn More
-        </Link>
       </div>
     </div>
   </div>
@@ -202,13 +194,15 @@ const UpcomingEvents = () => {
   };
   
   // Get the next occurrences for recurring events
-  const nextChurchCamp = eventsData.find(e => e.id === "church-camp-2025");
+  const currentYear = DateTime.now().year;
+  const nextChurchCamp = eventsData.find(e => e.id === `church-camp-${currentYear}`);
   const nextEncounterNight = getNextOccurrence("encounter-night");
   const nextCommunityService = getNextOccurrence("community-service");
   
   // Format date for display
   const formatDate = (event) => {
     if (!event) return "";
+    if (!event.date) return "Date and time to be announced";
     
     if (event.isMultiDay && event.endDate) {
       const startDate = DateTime.fromISO(event.date).setLocale('en')
@@ -230,15 +224,19 @@ const UpcomingEvents = () => {
       return `${startDate} - ${endDate}`;
     }
     
-    const formattedDate = DateTime.fromISO(event.date).setLocale('en')
-      .toLocaleString({
-        weekday: 'long',
-        month: 'long', 
-        day: 'numeric',
-        year: 'numeric'
-      });
-      
-    return `${formattedDate} at ${event.time}`;
+    try {
+      const formattedDate = DateTime.fromISO(event.date).setLocale('en')
+        .toLocaleString({
+          weekday: 'long',
+          month: 'long', 
+          day: 'numeric',
+          year: 'numeric'
+        });
+        
+      return `${formattedDate} at ${event.time}`;
+    } catch (error) {
+      return "Date and time to be announced";
+    }
   };
   
   return (
@@ -258,7 +256,7 @@ const UpcomingEvents = () => {
               <div className="text-sm text-gray-600 mb-2">{formatDate(nextChurchCamp)}</div>
               <h3 className="text-xl font-semibold mb-2 text-gray-900">Church Camp</h3>
               <p className="text-gray-600 mb-4 text-justify">Three days of outdoor activities, fellowship, and spiritual growth for the church families.</p>
-              <Link to="/events/church-camp-2025" className="text-gray-700 hover:text-black font-medium">
+              <Link to={`/events/church-camp-${currentYear}`} className="text-gray-700 hover:text-black font-medium">
                 Learn More →
               </Link>
             </div>

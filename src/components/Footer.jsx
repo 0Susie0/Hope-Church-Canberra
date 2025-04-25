@@ -52,7 +52,7 @@ function Footer() {
           <div>
             <h4 className="text-xl font-bold mb-4">Service Times</h4>
             <ul className="space-y-2">
-              <li>Sunday 10:00 AM - 12:00 PM</li>
+              <li>Sunday 10:00 AM - 12:30 PM</li>
             </ul>
           </div>
 
