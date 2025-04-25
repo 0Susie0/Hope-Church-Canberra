@@ -102,9 +102,34 @@ const generateMonthlyDatesForDayOfWeek = (startYear, endYear, dayOfWeek, weekOfM
   return dates;
 };
 
+// Helper function to calculate Easter Sunday for a given year
+// This uses the Meeus/Jones/Butcher algorithm
+const calculateEasterSunday = (year) => {
+  const a = year % 19;
+  const b = Math.floor(year / 100);
+  const c = year % 100;
+  const d = Math.floor(b / 4);
+  const e = b % 4;
+  const f = Math.floor((b + 8) / 25);
+  const g = Math.floor((b - f + 1) / 3);
+  const h = (19 * a + b - d - g + 15) % 30;
+  const i = Math.floor(c / 4);
+  const k = c % 4;
+  const l = (32 + 2 * e + 2 * i - h - k) % 7;
+  const m = Math.floor((a + 11 * h + 22 * l) / 451);
+  const month = Math.floor((h + l - 7 * m + 114) / 31);
+  const day = ((h + l - 7 * m + 114) % 31) + 1;
+  
+  // Return date in ISO format (YYYY-MM-DD)
+  return `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+};
+
 // Get current year and next year
-const currentYear = DateTime.now().year;
+const currentYear = 2025; // Setting current year to 2025 as specified
 const nextYear = currentYear + 1;
+
+// Get Easter Sunday for current year
+const easterSunday = calculateEasterSunday(currentYear);
 
 // Mock event data
 export const eventsData = [
@@ -223,6 +248,17 @@ export const eventsData = [
     description: "A special concert of worship and praise with our worship team.",
     image: "/images/Worship3.jpg",
     category: "Worship"
+  },
+  // Easter Service
+  {
+    id: `easter-service-${currentYear}`,
+    title: "Easter Sunday Service",
+    date: easterSunday, 
+    time: "10:00 AM",
+    location: "Cultural Centre Kambri",
+    description: "Join us for a special Easter celebration as we commemorate the resurrection of Jesus Christ with worship, a powerful message, and fellowship.",
+    image: "/images/Events/Easter Service.jpg", 
+    category: "Service"
   }
 ];
 
