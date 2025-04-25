@@ -29,20 +29,34 @@ const PageHeader = ({ title, subtitle, backgroundImage }) => (
 const LocationInfo = () => (
   <div className="py-16 bg-white">
     <div className="container mx-auto px-4">
-      <div className="flex flex-col md:flex-row items-center gap-12">
+      <div className="flex flex-col md:flex-row md:items-center gap-12">
         <div className="md:w-1/2">
           <h2 className="text-3xl font-bold mb-6">Our Location</h2>
           <p className="text-gray-700 mb-6">
             Hope Church Canberra is located in the center of Canberra, with convenient transportation and a pleasant environment. Whether you drive or take public transportation, you can easily reach us.
           </p>
           
-          <div className="bg-gray-50 p-6 rounded-lg shadow-md mb-6">
-            <h3 className="text-xl font-semibold mb-3">Service Information</h3>
-            <p className="text-gray-700 mb-3"><span className="font-medium">Service Time:</span> 10:00 AM - 12:30 PM Sundays</p>
-            <p className="text-gray-700 mb-1"><span className="font-medium">Service Location:</span></p>
-            <p className="text-gray-700 mb-1">Cultural Centre Kambri</p>
-            <p className="text-gray-700 mb-1">The Australian National University</p>
-            <p className="text-gray-700">Tangney Rd, Acton ACT 2601</p>
+          <div className="relative rounded-lg shadow-md mb-6 overflow-hidden">
+            {/* Background image */}
+            <div className="absolute inset-0 z-0">
+              <img 
+                src="/images/Sunday Service Location.jpg" 
+                alt="Sunday Service Location" 
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-black opacity-35"></div>
+            </div>
+            
+            {/* Content overlay */}
+            <div className="relative z-10 p-6 text-white">
+              <h3 className="text-xl font-semibold mb-3 text-white">Service Information</h3>
+              <p className="mb-3"><span className="font-medium">Service Time:</span> 10:00 AM - 12:30 PM Sundays</p>
+              <p className="mb-1"><span className="font-medium">Service Location:</span></p>
+              <p className="mb-1">T2 Theatre, Level 2</p>
+              <p className="mb-1">Lowitja O'Donoghue Cultural Centre</p>
+              <p className="mb-1">The Australian National University</p>
+              <p>153 Tangney Rd, Acton ACT</p>
+            </div>
           </div>
           
           <div className="bg-gray-50 p-6 rounded-lg shadow-md mb-6">
@@ -73,18 +87,29 @@ const LocationInfo = () => (
           </div>
         </div>
         
-        <div className="md:w-1/2 h-96 bg-gray-200 rounded-lg overflow-hidden shadow-xl">
-          {/* Google Map can be embedded here */}
-          <iframe 
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d6514.359999764052!2d149.1219398!3d-35.2766507!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6b164dee05699c33%3A0x35dc37aecc1fb698!2sCultural%20Centre%20Kambri%20(ANU%20Building%20153)!5e0!3m2!1sen!2sau!4v1745560202371!5m2!1sen!2sau" 
-            width="100%" 
-            height="100%" 
-            style={{ border: 0 }} 
-            allowFullScreen="" 
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-            title="Church Location Map"
-          ></iframe>
+        <div className="md:w-1/2 md:self-center">
+          <div className="max-w-lg mx-auto">
+            <h3 className="text-xl font-semibold mb-3 text-center">Find Us on the Map</h3>
+            {/* Google Map */}
+            <div className="h-96 bg-gray-200 rounded-lg overflow-hidden shadow-xl">
+              <iframe 
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d6514.359999764052!2d149.1219398!3d-35.2766507!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6b164dee05699c33%3A0x35dc37aecc1fb698!2sCultural%20Centre%20Kambri%20(ANU%20Building%20153)!5e0!3m2!1sen!2sau!4v1745560202371!5m2!1sen!2sau" 
+                width="100%" 
+                height="100%" 
+                style={{ border: 0 }} 
+                allowFullScreen="" 
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                title="Church Location Map"
+              ></iframe>
+            </div>
+            <div className="bg-gray-100 p-3 rounded-b-lg shadow-md">
+              <p className="text-gray-700 text-center">
+                We are conveniently located within the ANU campus, easily accessible 
+                from the city center and public transportation.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </div>

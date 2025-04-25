@@ -3,7 +3,7 @@
     "sundayService": {
       "title": "Sunday Service",
       "time": "10:00 AM",
-      "location": "Cultural Centre Kambri",
+      "location": "T2 Theatre, Lowitja O'Donoghue Cultural Centre, ANU",
       "description": "Join us for our weekly worship service.",
       "image": "/images/Events/SundayService.jpg",
       "category": "Service"
@@ -11,7 +11,7 @@
     "kidsChurch": {
       "title": "Kids Church",
       "time": "10:00 AM",
-      "location": "Kids Area",
+      "location": "T2 Theatre, Lowitja O'Donoghue Cultural Centre, ANU",
       "description": "A special program for children with games, stories, and activities.",
       "image": "/images/Events/KidsChurch.jpg",
       "category": "Children"
@@ -101,7 +101,7 @@
       "id": "easter-service",
       "title": "Easter Sunday Service",
       "time": "10:00 AM",
-      "location": "Cultural Centre Kambri",
+      "location": "T2 Theatre, Lowitja O'Donoghue Cultural Centre, ANU",
       "description": "Join us for a special Easter celebration as we commemorate the resurrection of Jesus Christ with worship, a powerful message, and fellowship.",
       "image": "/images/Events/Easter Service.jpg",
       "category": "Service"
