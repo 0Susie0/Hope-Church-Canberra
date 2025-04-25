@@ -304,22 +304,22 @@ const UpcomingEvents = () => {
 const CommunityStories = () => {
   const stories = [
     {
-      name: 'Mr. Zhang',
-      image: '/images/testimonial1.jpg',
-      quote: 'My family and I found a true sense of belonging at Hope Church. The people here are warm and friendly, and the pastor\'s sermons always inspire and encourage me.',
-      role: 'Church Member, 3 years'
-    },
-    {
-      name: 'Mrs. Li',
-      image: '/images/testimonial2.jpg',
-      quote: 'As a new immigrant, Hope Church helped me build a new social circle in Canberra. I\'ve made many good friends here who have helped me a lot in adapting to the new environment.',
+      name: 'Sis Ariane',
+      image: '/images/Community Stories/Sis Ariane.png',
+      quote: 'It\'s only my second month here, but I have already built true friendships and I feel very grateful to have met so many brothers and sisters in Christ. I had the chance to partake into church camp for the first time and to volunteer at the Early Morning Centre. These experiences really opened my eyes on the joys of serving my community, my church and our God! Hope Church and all of your life groups — thank you for your warm welcoming and support throughout this journey!',
       role: 'Church Member, 1 year'
     },
     {
-      name: 'Wang Family',
-      image: '/images/testimonial3.jpg',
-      quote: 'Our children love participating in the church\'s children\'s activities. The teachers are loving and patient, and the children not only learn about faith but also develop good character and social skills.',
-      role: 'Church Family, 2 years'
+      name: 'Sis Ming',
+      image: '/images/Community Stories/Sis Ming.png',
+      quote: 'I am blessed to encounter with God when I was in my early 20s as a student, through HOC and Hope Canberra church. Many decisions and the priorities in life lately have been forever changed. When you submit and serve God from a young age, you are able to see the great transformation power and strength of God to act in your life. And how he gives you purpose of life and wilderness dreams for his kingdom beyond imagination. Just as Ecclesiastes 12:1 said, remember our creator in the days of youth, seeking and serving God from one’s youth sets the foundation of life and is the best decision you can ever make.',
+      role: 'Church Member, 8 years'
+    },
+    {
+      name: 'Sis Odila',
+      image: '/images/Community Stories/Sis Odila.png',
+      quote: 'Hailing from Manus Island, PNG, Odila now calls Australia home. Since 2016, she’s been a vibrant part of our student ministry and a proud UC alum.Her story is proof that with prayer and hard work, dreams do come true! ❤️ Odila’s kindness shines in her family, workplace, and community as she shares Christ’s love.She’s actively serving at Hope Church Canberra and Kids Church — and we’re excited to see her continue inspiring those around her! 🙌💫',
+      role: 'Church Member, 8 years'
     }
   ];
   
