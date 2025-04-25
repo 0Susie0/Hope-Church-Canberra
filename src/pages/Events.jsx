@@ -114,7 +114,7 @@ export const eventsData = [
     title: "Sunday Service",
     date: date,
     time: "10:00 AM",
-    location: "Kambri Cultural Centre",
+    location: "Cultural Centre Kambri",
     description: "Join us for our weekly worship service.",
     image: "/images/Events/SundayService.jpg",
     category: "Service"
@@ -219,7 +219,7 @@ export const eventsData = [
     title: "Heaven Invade Worship Concert",
     date: null,
     time: "TBC",
-    location: "Kambri Cultural Centre",
+    location: "TBC",
     description: "A special concert of worship and praise with our worship team.",
     image: "/images/Worship3.jpg",
     category: "Worship"

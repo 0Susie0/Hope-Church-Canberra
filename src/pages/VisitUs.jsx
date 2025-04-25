@@ -37,9 +37,9 @@ const LocationInfo = () => (
             <h3 className="text-xl font-semibold mb-3">Service Information</h3>
             <p className="text-gray-700 mb-3"><span className="font-medium">Service Time:</span> 10:00 AM - 12:30 PM Sundays</p>
             <p className="text-gray-700 mb-1"><span className="font-medium">Service Location:</span></p>
-            <p className="text-gray-700 mb-1">Copland Lecture Theatre</p>
+            <p className="text-gray-700 mb-1">Cultural Centre Kambri</p>
             <p className="text-gray-700 mb-1">The Australian National University</p>
-            <p className="text-gray-700">25a Kingsley St, Acton ACT</p>
+            <p className="text-gray-700">Tangney Rd, Acton ACT 2601</p>
           </div>
           
           <div className="bg-gray-50 p-6 rounded-lg shadow-md mb-6">
@@ -73,12 +73,13 @@ const LocationInfo = () => (
         <div className="md:w-1/2 h-96 bg-gray-200 rounded-lg overflow-hidden shadow-xl">
           {/* Google Map can be embedded here */}
           <iframe 
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3257.5977928792293!2d149.1172543!3d-35.2780543!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6b164d6a31e5b3b9%3A0x5f3d8a9e3c6c14e0!2sCopland%20Lecture%20Theatre%2C%20Australian%20National%20University%2C%20Acton%20ACT%202601!5e0!3m2!1sen!2sau!4v1647329876543!5m2!1sen!2sau" 
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d6514.359999764052!2d149.1219398!3d-35.2766507!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6b164dee05699c33%3A0x35dc37aecc1fb698!2sCultural%20Centre%20Kambri%20(ANU%20Building%20153)!5e0!3m2!1sen!2sau!4v1745560202371!5m2!1sen!2sau" 
             width="100%" 
             height="100%" 
             style={{ border: 0 }} 
             allowFullScreen="" 
             loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
             title="Church Location Map"
           ></iframe>
         </div>
@@ -103,7 +104,7 @@ const VisitFAQ = () => {
     },
     {
       question: 'Is parking available?',
-      answer: 'Yes, ANU has free parking available on Sundays. You can park at the nearby parking lots and walk a short distance to the Copland Lecture Theatre.'
+      answer: 'Yes, ANU has free parking available on Sundays. You can park at the nearby parking lots and walk a short distance to the Cultural Centre Kambri.'
     },
     {
       question: 'What is the worship service format?',

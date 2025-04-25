@@ -42,17 +42,17 @@ const ServiceInfo = () => (
         <div className="bg-gray-50 p-6 rounded-lg shadow-md">
           <h3 className="text-xl font-semibold mb-3 text-gray-900">Sunday Service</h3>
           <p className="mb-2 text-gray-700">Sunday 10:00 AM - 12:30 PM</p>
-          <p className="text-gray-700">Copland Lecture Theatre
+          <p className="text-gray-700">Cultural Centre Kambri
 The Australian National University
-25a Kingsley St, Acton ACT</p>
+Tangney Rd, Acton ACT 2601</p>
         </div>
         
         <div className="bg-gray-50 p-6 rounded-lg shadow-md">
           <h3 className="text-xl font-semibold mb-3 text-gray-900">Kids Church</h3>
           <p className="mb-2 text-gray-700">Sunday 10:00 AM - 12:30 PM</p>
-          <p className="text-gray-700">Copland Lecture Theatre
+          <p className="text-gray-700">Cultural Centre Kambri
 The Australian National University
-25a Kingsley St, Acton ACT</p>
+Tangney Rd, Acton ACT 2601</p>
         </div>
       </div>
     </div>
