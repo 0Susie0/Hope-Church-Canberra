@@ -1,56 +1,13 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { eventsData } from './Events';
 import { DateTime } from 'luxon';
+import { getEventById } from '../data/dataService';
 
 const EventDetails = () => {
   const { id } = useParams();
   
-  // Extract event type from id (for recurring events)
-  const eventType = id.split('-')[0];
-  
-  // Find event based on full ID or event type for recurring events
-  let event;
-  let isRecurring = false;
-  let recurrencePattern = "";
-  
-  // Check if this is a recurring event type
-  if (['sunday', 'kids', 'encounter', 'community'].includes(eventType)) {
-    isRecurring = true;
-    
-    // Find all events of this type
-    const allEventsOfType = eventsData.filter(e => e.id.includes(eventType));
-    
-    // Find future events of this type (only for events with dates)
-    const now = DateTime.now().setLocale('en');
-    const futureEvents = allEventsOfType.filter(e => 
-      e.date && DateTime.fromISO(e.date).setLocale('en') >= now
-    );
-    
-    // Sort by date (ascending) and get the nearest one
-    if (futureEvents.length > 0) {
-      futureEvents.sort((a, b) => 
-        DateTime.fromISO(a.date).setLocale('en') < DateTime.fromISO(b.date).setLocale('en') ? -1 : 1
-      );
-      event = futureEvents[0];
-    } else {
-      event = allEventsOfType[0];
-    }
-    
-    // Set recurrence pattern based on event type
-    if (eventType === 'sunday') {
-      recurrencePattern = "Every Sunday at 10:00 AM";
-    } else if (eventType === 'kids') {
-      recurrencePattern = "Every Sunday at 10:00 AM";
-    } else if (eventType === 'encounter') {
-      recurrencePattern = "Last Tuesday of each month at 7:00 PM";
-    } else if (eventType === 'community') {
-      recurrencePattern = "Monthly on Saturdays";
-    }
-  } else {
-    // Non-recurring event - find exact match
-    event = eventsData.find(e => String(e.id) === id);
-  }
+  // Find event based on ID
+  const event = getEventById(id);
 
   if (!event) {
     return (
@@ -121,7 +78,7 @@ const EventDetails = () => {
           <div className="text-white">
             <h1 className="text-white text-4xl md:text-5xl font-bold mb-4">{event.title}</h1>
             <div className="mb-4">
-              {isRecurring && (
+              {event.isRecurring && (
                 <div className="inline-block bg-blue-500 text-white text-sm font-semibold px-3 py-1 rounded-full mr-2">
                   Recurring Event
                 </div>
@@ -146,7 +103,7 @@ const EventDetails = () => {
               <h2 className="text-2xl font-bold text-gray-800 mb-6">About This Event</h2>
               <p className="text-gray-600 mb-6">{event.description}</p>
               
-              {isRecurring && (
+              {event.isRecurring && (
                 <div className="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6">
                   <div className="flex">
                     <div className="flex-shrink-0">
@@ -156,7 +113,7 @@ const EventDetails = () => {
                     </div>
                     <div className="ml-3">
                       <p className="text-sm text-blue-700">
-                        <span className="font-semibold">Recurring Schedule:</span> {recurrencePattern}
+                        <span className="font-semibold">Recurring Schedule:</span> {event.recurrencePattern}
                       </p>
                       <p className="text-sm text-blue-700 mt-1">
                         Next occurrence: {formattedNextOccurrence}
@@ -319,9 +276,9 @@ const EventDetails = () => {
               <div className="space-y-4">
                 <div>
                   <h4 className="text-sm font-medium text-gray-500">Date & Time</h4>
-                  {isRecurring ? (
+                  {event.isRecurring ? (
                     <div>
-                      <p className="text-gray-800">{recurrencePattern}</p>
+                      <p className="text-gray-800">{event.recurrencePattern}</p>
                       <p className="text-gray-800 mt-1">Next: {formattedNextOccurrence}</p>
                     </div>
                   ) : event.isMultiDay ? (

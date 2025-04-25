@@ -1,0 +1,110 @@
+{
+  "recurringEvents": {
+    "sundayService": {
+      "title": "Sunday Service",
+      "time": "10:00 AM",
+      "location": "Cultural Centre Kambri",
+      "description": "Join us for our weekly worship service.",
+      "image": "/images/Events/SundayService.jpg",
+      "category": "Service"
+    },
+    "kidsChurch": {
+      "title": "Kids Church",
+      "time": "10:00 AM",
+      "location": "Kids Area",
+      "description": "A special program for children with games, stories, and activities.",
+      "image": "/images/Events/KidsChurch.jpg",
+      "category": "Children"
+    },
+    "encounterNight": {
+      "title": "Encounter Night",
+      "time": "07:00 PM",
+      "location": "Vision Church",
+      "description": "A night of extended worship and prayer.",
+      "image": "/images/Events/Encounter Night.jpg",
+      "category": "Worship",
+      "isMonthly": true,
+      "recurrencePattern": "Last Tuesday of each month at 7:00 PM"
+    },
+    "communityService": {
+      "title": "Community Service",
+      "time": "Date and time to be announced",
+      "location": "The Early Morning Centre",
+      "description": "Serving our local community through various outreach projects.",
+      "image": "/images/Events/Community Service.jpg",
+      "category": "Service",
+      "recurrencePattern": "Monthly on Saturdays"
+    }
+  },
+  "annualEvents": [
+    {
+      "id": "church-camp",
+      "title": "Church Camp",
+      "time": "TBC",
+      "location": "TBC",
+      "description": "Three days of outdoor activities, fellowship, and spiritual growth for church families.",
+      "image": "/images/Church Fire.jpg",
+      "category": "Workshop",
+      "isMultiDay": true,
+      "detailedInfo": {
+        "expectations": [
+          "Spiritual Growth & Reflection - Bible study and writing activities",
+          "Participate in the themed Lifegroup Skit",
+          "Fellowship & Connection through Guardian Angel activity",
+          "Campfire night skits, discussions, and games",
+          "Comfortable clothing, outdoor sports gear, and snacks for casual social times"
+        ]
+      }
+    },
+    {
+      "id": "womens-fellowship",
+      "title": "Women's Morning Tea",
+      "time": "TBC",
+      "location": "TBC",
+      "description": "Join us for our first-ever Women's Fellowship — a time to connect, recharge, and grow in faith over warm drinks and heartfelt conversations.",
+      "image": "/images/Events/Women's Morning Tea.jpg",
+      "category": "Workshop",
+      "detailedInfo": {
+        "expectations": [
+          "Drinks, light bites & laughter",
+          "Craft tables, women leadership videos, book exchange, and conversation games",
+          "Special beauty voucher gifts for participants in sharing & games"
+        ],
+        "toBring": [
+          "Garden party attire",
+          "Wisdom and stories to share",
+          "Curious life questions for games",
+          "Devotional books on faith or women's topics for exchange"
+        ],
+        "notes": "Kids and fluffy pets are welcome."
+      }
+    },
+    {
+      "id": "water-baptism",
+      "title": "Water Baptism",
+      "time": "TBC",
+      "location": "TBC",
+      "description": "Witness and celebrate new believers taking their next step in faith.",
+      "image": "/images/Events/WaterBaptism.jpg",
+      "category": "Service"
+    },
+    {
+      "id": "heaven-invade",
+      "title": "Heaven Invade Worship Concert",
+      "time": "TBC",
+      "location": "TBC",
+      "description": "A special concert of worship and praise with our worship team.",
+      "image": "/images/Worship3.jpg",
+      "category": "Worship"
+    },
+    {
+      "id": "easter-service",
+      "title": "Easter Sunday Service",
+      "time": "10:00 AM",
+      "location": "Cultural Centre Kambri",
+      "description": "Join us for a special Easter celebration as we commemorate the resurrection of Jesus Christ with worship, a powerful message, and fellowship.",
+      "image": "/images/Events/Easter Service.jpg",
+      "category": "Service"
+    }
+  ]
+} 

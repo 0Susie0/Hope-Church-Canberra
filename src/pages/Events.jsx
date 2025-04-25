@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { DateTime } from 'luxon';
+import { 
+  processedEvents, 
+  getFilteredEvents, 
+  formatDate as formatEventDate
+} from '../data/dataService';
 
 const PageHeader = ({ title, subtitle, backgroundImage }) => (
   <div className="relative bg-gray-900 py-32">
@@ -24,277 +29,11 @@ const PageHeader = ({ title, subtitle, backgroundImage }) => (
   </div>
 );
 
-// Helper function to generate dates that fall on a specific day of week
-const generateDatesForDayOfWeek = (startYear, endYear, dayOfWeek, count) => {
-  const dates = [];
-  
-  // Create a DateTime object for January 1st of the start year
-  let current = DateTime.local(startYear, 1, 1);
-  
-  // Move to the first occurrence of the desired day of week
-  while (current.weekday !== dayOfWeek) {
-    current = current.plus({ days: 1 });
-  }
-  
-  // Generate dates until we have enough or exceed the end year
-  while (dates.length < count && current.year <= endYear) {
-    dates.push(current.toISODate());
-    current = current.plus({ weeks: 1 });
-  }
-  
-  return dates;
-};
-
-// Helper function to generate monthly dates that fall on a specific day of week
-const generateMonthlyDatesForDayOfWeek = (startYear, endYear, dayOfWeek, weekOfMonth, count) => {
-  const dates = [];
-  
-  // Create a DateTime object for January 1st of the start year
-  let current = DateTime.local(startYear, 1, 1);
-  
-  // For last Tuesday of the month (Encounter Night)
-  const isLastWeekOfMonth = weekOfMonth >= 20;
-  
-  // Generate dates until we have enough or exceed the end year
-  while (dates.length < count && current.year <= endYear) {
-    // Find the first occurrence of the day in the month
-    let targetDate = current.set({ day: 1 });
-    while (targetDate.weekday !== dayOfWeek) {
-      targetDate = targetDate.plus({ days: 1 });
-    }
-    
-    if (isLastWeekOfMonth) {
-      // For "last Tuesday of month" type events
-      // Find the last day of the month
-      const lastDay = current.endOf('month');
-      // Start from the last day and go backwards until we find the right weekday
-      let lastOccurrence = lastDay;
-      while (lastOccurrence.weekday !== dayOfWeek) {
-        lastOccurrence = lastOccurrence.minus({ days: 1 });
-      }
-      targetDate = lastOccurrence;
-    } else {
-      // Adjust to the specified week of the month (e.g., 4th Tuesday)
-      if (weekOfMonth > 1) {
-        targetDate = targetDate.plus({ weeks: weekOfMonth - 1 });
-        
-        // If this pushes us into the next month, use the last occurrence in the current month
-        if (targetDate.month !== current.month) {
-          targetDate = targetDate.minus({ weeks: 1 });
-        }
-      }
-    }
-    
-    // Add the date if it's still in the target year range
-    if (targetDate.year <= endYear && targetDate.year >= startYear) {
-      dates.push(targetDate.toISODate());
-    }
-    
-    // Move to the next month
-    current = current.plus({ months: 1 });
-  }
-  
-  // For debugging
-  if (dayOfWeek === 2 && weekOfMonth === 99) {
-    console.log('Generated Encounter Night dates:', dates);
-  }
-  
-  return dates;
-};
-
-// Helper function to calculate Easter Sunday for a given year
-// This uses the Meeus/Jones/Butcher algorithm
-const calculateEasterSunday = (year) => {
-  const a = year % 19;
-  const b = Math.floor(year / 100);
-  const c = year % 100;
-  const d = Math.floor(b / 4);
-  const e = b % 4;
-  const f = Math.floor((b + 8) / 25);
-  const g = Math.floor((b - f + 1) / 3);
-  const h = (19 * a + b - d - g + 15) % 30;
-  const i = Math.floor(c / 4);
-  const k = c % 4;
-  const l = (32 + 2 * e + 2 * i - h - k) % 7;
-  const m = Math.floor((a + 11 * h + 22 * l) / 451);
-  const month = Math.floor((h + l - 7 * m + 114) / 31);
-  const day = ((h + l - 7 * m + 114) % 31) + 1;
-  
-  // Return date in ISO format (YYYY-MM-DD)
-  return `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
-};
-
-// Get current year and next year
-const currentYear = 2025; // Setting current year to 2025 as specified
-const nextYear = currentYear + 1;
-
-// Get Easter Sunday for current year
-const easterSunday = calculateEasterSunday(currentYear);
-
-// Mock event data
-export const eventsData = [
-  // Recurring Events - Sunday Service (weekly on Sundays)
-  ...generateDatesForDayOfWeek(currentYear, nextYear, 7, 104).map((date, i) => ({
-    id: `sunday-service-${i}`,
-    title: "Sunday Service",
-    date: date,
-    time: "10:00 AM",
-    location: "Cultural Centre Kambri",
-    description: "Join us for our weekly worship service.",
-    image: "/images/Events/SundayService.jpg",
-    category: "Service"
-  })),
-
-  // Recurring Events - Kids Church (weekly on Sundays)
-  ...generateDatesForDayOfWeek(currentYear, nextYear, 7, 104).map((date, i) => ({
-    id: `kids-church-${i}`,
-    title: "Kids Church",
-    date: date,
-    time: "10:00 AM",
-    location: "Kids Area",
-    description: "A special program for children with games, stories, and activities.",
-    image: "/images/Events/KidsChurch.jpg",
-    category: "Children"
-  })),
-
-  // Recurring Events - Encounter Night (monthly on the last Tuesday)
-  ...generateMonthlyDatesForDayOfWeek(currentYear, nextYear, 2, 99, 24).map((date, i) => ({
-    id: `encounter-night-${i}`,
-    title: "Encounter Night",
-    date: date,
-    time: "07:00 PM",
-    location: "Vision Church",
-    description: "A night of extended worship and prayer.",
-    image: "/images/Events/Encounter Night.jpg",
-    category: "Worship",
-    isMonthly: true
-  })),
-
-  // Recurring Events - Community Service (weekly on Saturdays)
-  ...generateDatesForDayOfWeek(currentYear, nextYear, 6, 104).map((date, i) => ({
-    id: `community-service-${i}`,
-    title: "Community Service",
-    date: null,
-    time: "Date and time to be announced",
-    location: "The Early Morning Centre",
-    description: "Serving our local community through various outreach projects.",
-    image: "/images/Events/Community Service.jpg",
-    category: "Service"
-  })),
-
-  // Annual Events (occur once per year)
-  {
-    id: `church-camp-${currentYear}`,
-    title: "Church Camp",
-    date: null,
-    endDate: null,
-    time: "TBC",
-    location: "TBC",
-    description: "Three days of outdoor activities, fellowship, and spiritual growth for church families.",
-    image: "/images/Church Fire.jpg",
-    category: "Workshop",
-    isMultiDay: true,
-    detailedInfo: {
-      expectations: [
-        "Spiritual Growth & Reflection - Bible study and writing activities",
-        "Participate in the themed Lifegroup Skit",
-        "Fellowship & Connection through Guardian Angel activity",
-        "Campfire night skits, discussions, and games",
-        "Comfortable clothing, outdoor sports gear, and snacks for casual social times"
-      ]
-    }
-  },
-  {
-    id: `womens-fellowship-${currentYear}`,
-    title: "Women's Morning Tea",
-    date: null,
-    time: "TBC",
-    location: "TBC",
-    description: "Join us for our first-ever Women's Fellowship — a time to connect, recharge, and grow in faith over warm drinks and heartfelt conversations.",
-    image: "/images/Events/Women's Morning Tea.jpg",
-    category: "Workshop",
-    detailedInfo: {
-      expectations: [
-        "Drinks, light bites & laughter",
-        "Craft tables, women leadership videos, book exchange, and conversation games",
-        "Special beauty voucher gifts for participants in sharing & games"
-      ],
-      toBring: [
-        "Garden party attire",
-        "Wisdom and stories to share",
-        "Curious life questions for games",
-        "Devotional books on faith or women's topics for exchange"
-      ],
-      notes: "Kids and fluffy pets are welcome."
-    }
-  },
-  {
-    id: `water-baptism-${currentYear}`,
-    title: "Water Baptism",
-    date: null,
-    time: "TBC",
-    location: "TBC",
-    description: "Witness and celebrate new believers taking their next step in faith.",
-    image: "/images/Events/WaterBaptism.jpg",
-    category: "Service"
-  },
-  // Heaven Invade Worship Concert
-  {
-    id: `heaven-invade-${nextYear}`,
-    title: "Heaven Invade Worship Concert",
-    date: null,
-    time: "TBC",
-    location: "TBC",
-    description: "A special concert of worship and praise with our worship team.",
-    image: "/images/Worship3.jpg",
-    category: "Worship"
-  },
-  // Easter Service
-  {
-    id: `easter-service-${currentYear}`,
-    title: "Easter Sunday Service",
-    date: easterSunday, 
-    time: "10:00 AM",
-    location: "Cultural Centre Kambri",
-    description: "Join us for a special Easter celebration as we commemorate the resurrection of Jesus Christ with worship, a powerful message, and fellowship.",
-    image: "/images/Events/Easter Service.jpg", 
-    category: "Service"
-  }
-];
-
-// Date formatting function
-const formatDate = (date) => {
-  return DateTime.fromISO(date).setLocale('en').toLocaleString(DateTime.DATETIME_FULL);
-};
-
 // Event list component
 const EventList = ({ events }) => {
   // Format date for display
   const formatDate = (event) => {
-    if (!event || !event.date) return "Date to be announced";
-    
-    const startDate = DateTime.fromISO(event.date).setLocale('en').toLocaleString({
-      weekday: 'long',
-      month: 'long', 
-      day: 'numeric',
-      year: 'numeric'
-    });
-    
-    if (event.isMultiDay && event.endDate) {
-      const endDate = DateTime.fromISO(event.endDate).setLocale('en').toLocaleString({
-        weekday: 'long',
-        month: 'long', 
-        day: 'numeric',
-        year: 'numeric'
-      });
-      return `${startDate} - ${endDate}`;
-    }
-    
-    if (event.time === "TBC") {
-      return `${startDate} (Time to be announced)`;
-    }
-    
-    return `${startDate} at ${event.time}`;
+    return formatEventDate(event);
   };
   
   return (
@@ -403,105 +142,8 @@ const SearchAndFilter = ({ onSearch, onFilter }) => {
 
 // Main page component
 const Events = () => {
-  // Get the filtered events (showing only nearest future occurrences of recurring events)
-  const getFilteredEvents = () => {
-    // Get current date
-    const now = new Date();
-    
-    // Identify recurring event types from their IDs
-    const recurringTypes = ['sunday-service', 'kids-church', 'encounter-night', 'community-service', 'worship-night'];
-    
-    // Group events by recurring type
-    const eventsByType = {};
-    recurringTypes.forEach(type => {
-      eventsByType[type] = [];
-    });
-    
-    // Separate recurring events from one-time events
-    const oneTimeEvents = [];
-    const weeklyRecurringEvents = [];
-    const monthlyRecurringEvents = [];
-    
-    eventsData.forEach(event => {
-      let isRecurring = false;
-      
-      // Check if this is a recurring event
-      for (const type of recurringTypes) {
-        if (event.id.includes(type)) {
-          eventsByType[type].push(event);
-          
-          // Special handling for monthly events like Encounter Night
-          if (type === 'encounter-night') {
-            monthlyRecurringEvents.push(event);
-          } else {
-            weeklyRecurringEvents.push(event);
-          }
-          
-          isRecurring = true;
-          break;
-        }
-      }
-      
-      // If not recurring, add to one-time events
-      if (!isRecurring) {
-        oneTimeEvents.push(event);
-      }
-    });
-    
-    // Find nearest future occurrence for each weekly recurring event type
-    const nearestWeeklyEvents = [];
-    
-    // Process weekly recurring events
-    Object.keys(eventsByType).forEach(type => {
-      if (type !== 'encounter-night' && eventsByType[type].length > 0) {
-        // Filter future events
-        const futureEvents = eventsByType[type].filter(e => new Date(e.date) >= now);
-        
-        // Sort by date (ascending)
-        futureEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
-        
-        // Add the nearest one (if exists)
-        if (futureEvents.length > 0) {
-          nearestWeeklyEvents.push(futureEvents[0]);
-        } else {
-          // If no future events, add the last past occurrence
-          const pastEvents = eventsByType[type].sort((a, b) => new Date(b.date) - new Date(a.date));
-          if (pastEvents.length > 0) {
-            nearestWeeklyEvents.push(pastEvents[0]);
-          }
-        }
-      }
-    });
-    
-    // For monthly events like Encounter Night, show only the nearest one
-    const nearestMonthlyEvents = [];
-    
-    // Process Encounter Night events
-    if (eventsByType['encounter-night'] && eventsByType['encounter-night'].length > 0) {
-      // Filter future events
-      const futureEvents = eventsByType['encounter-night'].filter(e => new Date(e.date) >= now);
-      
-      // Sort by date (ascending)
-      futureEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
-      
-      // Add only the nearest occurrence
-      if (futureEvents.length > 0) {
-        nearestMonthlyEvents.push(futureEvents[0]);
-      } else {
-        // If no future events, add the last past occurrence
-        const pastEvents = eventsByType['encounter-night'].sort((a, b) => new Date(b.date) - new Date(a.date));
-        if (pastEvents.length > 0) {
-          nearestMonthlyEvents.push(pastEvents[0]);
-        }
-      }
-    }
-    
-    // Combine one-time events with nearest recurring events
-    return [...oneTimeEvents, ...nearestWeeklyEvents, ...nearestMonthlyEvents];
-  };
-  
   // Get the filtered events list (memoized)
-  const filteredEventsList = React.useMemo(() => getFilteredEvents(), [eventsData]);
+  const filteredEventsList = React.useMemo(() => getFilteredEvents(), []);
   
   // Initialize state
   const [filteredEvents, setFilteredEvents] = useState(filteredEventsList);
@@ -528,9 +170,9 @@ const Events = () => {
     
     // Filter by time
     if (filter.time === 'upcoming') {
-      filtered = filtered.filter(event => new Date(event.date) >= new Date());
+      filtered = filtered.filter(event => event.date && new Date(event.date) >= new Date());
     } else if (filter.time === 'past') {
-      filtered = filtered.filter(event => new Date(event.date) < new Date());
+      filtered = filtered.filter(event => event.date && new Date(event.date) < new Date());
     }
     
     // Filter by type
@@ -568,4 +210,5 @@ const Events = () => {
   );
 };
 
-export default Events; 
+export default Events;
+export { processedEvents as allEventsData }; 

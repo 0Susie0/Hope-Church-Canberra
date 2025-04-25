@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { FaMapMarkerAlt, FaPhoneAlt, FaEnvelope, FaClock } from 'react-icons/fa';
+import { visitFaqData } from '../data/dataService';
+import '../styles/VisitUs.css';
 
 const PageHeader = ({ title, subtitle, backgroundImage }) => (
   <div className="relative bg-gray-900 py-32">
@@ -89,56 +92,22 @@ const LocationInfo = () => (
 );
 
 const VisitFAQ = () => {
-  const faqs = [
-    {
-      question: 'What should I know for my first visit?',
-      answer: 'We welcome everyone! You can wear comfortable clothes and arrive 10-15 minutes early. Our welcome team will help you find a seat. You don\'t need to bring anything special, just come with an open mind.'
-    },
-    {
-      question: 'Is childcare available?',
-      answer: 'Yes, we provide Kids Church during Sunday worship. We have dedicated children\'s areas and trained teachers who provide age-appropriate activities and teaching for children of different ages.'
-    },
-    {
-      question: 'How do I join the church?',
-      answer: 'We regularly hold new member classes that introduce the church\'s faith, values, and operations. After completing the course, you can apply to become a formal member. Please contact us at hopechurchact@gmail.com to learn about the next course schedule.'
-    },
-    {
-      question: 'Is parking available?',
-      answer: 'Yes, ANU has free parking available on Sundays. You can park at the nearby parking lots and walk a short distance to the Cultural Centre Kambri.'
-    },
-    {
-      question: 'What is the worship service format?',
-      answer: 'Our worship includes contemporary music and biblical teaching. There is typically 30-40 minutes of musical worship followed by a 30-40 minute sermon. The entire service lasts about 2.5 hours from 10:00 AM to 12:30 PM.'
-    },
-    {
-      question: 'How can I get involved in serving?',
-      answer: 'We have various service opportunities, including the worship team, welcome team, children\'s ministry, technical support, and more. You can contact us at hopechurchact@gmail.com or speak with any of our team members after the service, and we will help you find a suitable area to serve based on your interests and gifts.'
-    }
-  ];
-  
   return (
-    <div className="py-16 bg-white">
+    <section className="visit-faq py-16">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold mb-2">Frequently Asked Questions</h2>
-          <div className="w-20 h-1 bg-gray-800 mx-auto mb-4"></div>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            Here are some common questions from visitors. If you have other questions, please feel free to contact us.
-          </p>
-        </div>
-        
-        <div className="max-w-3xl mx-auto">
-          <div className="space-y-6">
-            {faqs.map((faq, index) => (
-              <div key={index} className="bg-gray-50 rounded-lg p-6 shadow-md">
-                <h3 className="text-xl font-semibold mb-3">{faq.question}</h3>
-                <p className="text-gray-600">{faq.answer}</p>
+        <h2 className="section-title text-center mb-8">Frequently Asked Questions</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {visitFaqData.map((faq, index) => (
+            <div key={index} className="mb-4">
+              <div className="faq-item">
+                <h3 className="faq-question">{faq.question}</h3>
+                <p className="faq-answer">{faq.answer}</p>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

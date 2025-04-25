@@ -1,7 +1,12 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { eventsData } from './Events';
 import { DateTime } from 'luxon';
+import { 
+  storiesData, 
+  getNextOccurrence, 
+  currentYear, 
+  formatDate 
+} from '../data/dataService';
 
 const HeroSection = () => (
   <div className="relative h-screen overflow-hidden">
@@ -62,38 +67,7 @@ Tangney Rd, Acton ACT 2601</p>
 const ImageCarousel = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   
-  const slides = [
-    {
-      id: 1,
-      image: '/images/ChurchCamp.jpg',
-      title: 'Church Camp',
-      description: 'Building relationships and growing together in faith'
-    },
-    {
-      id: 2,
-      image: '/images/Thrive.jpg',
-      title: 'Oceania Conference',
-      description: 'Empowering the next generation'
-    },
-    {
-      id: 3,
-      image: '/images/Worship3.jpg',
-      title: 'Worship',
-      description: 'Experiencing God through praise and worship'
-    },
-    {
-      id: 4,
-      image: '/images/Connection.jpg',
-      title: 'Connection',
-      description: 'Growing together in Christ'
-    },
-    {
-      id: 5,
-      image: '/images/Prophetic Dancing.jpg',
-      title: 'Prophetic Dance',
-      description: 'Expressing worship through various art forms'
-    }
-  ];
+  const slides = storiesData.imageCarousel;
   
   const goToPrevSlide = () => {
     setCurrentSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
@@ -173,71 +147,10 @@ const ImageCarousel = () => {
 };
 
 const UpcomingEvents = () => {
-  // Get the next occurrence of a recurring event
-  const getNextOccurrence = (eventId) => {
-    // Find all occurrences of this event type
-    const eventType = eventId.split('-').slice(0, -1).join('-');
-    const allEventsOfType = eventsData.filter(e => e.id.startsWith(eventType));
-    
-    // Find future events
-    const now = DateTime.now().setLocale('en');
-    const futureEvents = allEventsOfType.filter(e => 
-      DateTime.fromISO(e.date).setLocale('en') >= now
-    );
-    
-    // Sort by date (ascending) and get the nearest one
-    futureEvents.sort((a, b) => 
-      DateTime.fromISO(a.date).setLocale('en') < DateTime.fromISO(b.date).setLocale('en') ? -1 : 1
-    );
-    
-    return futureEvents.length > 0 ? futureEvents[0] : allEventsOfType[0];
-  };
-  
   // Get the next occurrences for recurring events
-  const currentYear = DateTime.now().year;
-  const nextChurchCamp = eventsData.find(e => e.id === `church-camp-${currentYear}`);
+  const nextChurchCamp = getNextOccurrence(`church-camp-${currentYear}`);
   const nextEncounterNight = getNextOccurrence("encounter-night");
   const nextCommunityService = getNextOccurrence("community-service");
-  
-  // Format date for display
-  const formatDate = (event) => {
-    if (!event) return "";
-    if (!event.date) return "Date and time to be announced";
-    
-    if (event.isMultiDay && event.endDate) {
-      const startDate = DateTime.fromISO(event.date).setLocale('en')
-        .toLocaleString({
-          weekday: 'long',
-          month: 'long', 
-          day: 'numeric',
-          year: 'numeric'
-        });
-        
-      const endDate = DateTime.fromISO(event.endDate).setLocale('en')
-        .toLocaleString({
-          weekday: 'long',
-          month: 'long', 
-          day: 'numeric',
-          year: 'numeric'
-        });
-        
-      return `${startDate} - ${endDate}`;
-    }
-    
-    try {
-      const formattedDate = DateTime.fromISO(event.date).setLocale('en')
-        .toLocaleString({
-          weekday: 'long',
-          month: 'long', 
-          day: 'numeric',
-          year: 'numeric'
-        });
-        
-      return `${formattedDate} at ${event.time}`;
-    } catch (error) {
-      return "Date and time to be announced";
-    }
-  };
   
   return (
     <div className="bg-gray-100 py-16">
@@ -302,26 +215,7 @@ const UpcomingEvents = () => {
 };
 
 const CommunityStories = () => {
-  const stories = [
-    {
-      name: 'Sis Ariane',
-      image: '/images/Community Stories/Sis Ariane.png',
-      quote: 'It\'s only my second month here, but I have already built true friendships and I feel very grateful to have met so many brothers and sisters in Christ. I had the chance to partake into church camp for the first time and to volunteer at the Early Morning Centre. These experiences really opened my eyes on the joys of serving my community, my church and our God! Hope Church and all of your life groups — thank you for your warm welcoming and support throughout this journey!',
-      role: 'Church Member, 1 year'
-    },
-    {
-      name: 'Sis Ming',
-      image: '/images/Community Stories/Sis Ming.png',
-      quote: 'I am blessed to encounter with God when I was in my early 20s as a student, through HOC and Hope Canberra church. Many decisions and the priorities in life lately have been forever changed. When you submit and serve God from a young age, you are able to see the great transformation power and strength of God to act in your life. And how he gives you purpose of life and wilderness dreams for his kingdom beyond imagination. Just as Ecclesiastes 12:1 said, remember our creator in the days of youth, seeking and serving God from one’s youth sets the foundation of life and is the best decision you can ever make.',
-      role: 'Church Member, 8 years'
-    },
-    {
-      name: 'Sis Odila',
-      image: '/images/Community Stories/Sis Odila.png',
-      quote: 'Hailing from Manus Island, PNG, Odila now calls Australia home. Since 2016, she’s been a vibrant part of our student ministry and a proud UC alum.Her story is proof that with prayer and hard work, dreams do come true! ❤️ Odila’s kindness shines in her family, workplace, and community as she shares Christ’s love.She’s actively serving at Hope Church Canberra and Kids Church — and we’re excited to see her continue inspiring those around her! 🙌💫',
-      role: 'Church Member, 8 years'
-    }
-  ];
+  const stories = storiesData.communityStories;
   
   return (
     <div className="py-16 bg-gray-50">

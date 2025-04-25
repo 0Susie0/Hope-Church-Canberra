@@ -1,6 +1,77 @@
 # Hope Church Canberra Website
 
-A modern, responsive website for Hope Church Canberra built with React.
+A React website for Hope Church Canberra, designed to provide information about the church, events, life groups, and more.
+
+## Data Structure
+
+The website's data is organized in JSON files in the `src/data/` directory for easier maintenance and separation of concerns:
+
+### Events Data (`src/data/events.json`)
+
+This file contains information about church events, divided into two categories:
+
+1. **Recurring Events**: 
+   - `sundayService`: Weekly Sunday worship services
+   - `kidsChurch`: Weekly children's program
+   - `encounterNight`: Monthly worship and prayer night
+   - `communityService`: Community outreach activities
+
+2. **Annual Events**:
+   - Church Camp
+   - Women's Morning Tea
+   - Water Baptism
+   - Heaven Invade Worship Concert
+   - Easter Sunday Service
+
+### Life Groups Data (`src/data/lifegroups.json`)
+
+Contains information about the church's small groups:
+- Zion
+- Eden
+- Bethel
+- Hope on Campus
+- Ablaze
+
+### Stories Data (`src/data/stories.json`)
+
+Contains:
+1. **Community Stories**: Testimonials from church members
+2. **Image Carousel**: Images and descriptions for the homepage carousel
+
+### Data Service (`src/data/dataService.js`)
+
+This module provides utility functions to work with the JSON data:
+
+- `processedEvents`: Generated event instances with calculated dates
+- `getFilteredEvents()`: Returns filtered events (e.g., only nearest occurrences of recurring events)
+- `formatDate()`: Formats event dates for display
+- `getNextOccurrence()`: Gets the next occurrence of a specific event
+- `getEventById()`: Finds a specific event by its ID
+- `calculateEasterSunday()`: Calculates Easter Sunday date for a given year
+
+## Pages
+
+- **Home**: Church introduction, upcoming events, community stories
+- **Events**: List of all events with search and filter functionality
+- **Event Details**: Detailed information about specific events
+- **Life Groups**: Information about church small groups
+- **Visit Us**: Location information, service times, and FAQs
+
+## Maintenance
+
+To update the website content:
+
+1. **Edit Events**: Modify `src/data/events.json` to add, update, or remove events
+2. **Edit Life Groups**: Modify `src/data/lifegroups.json` to update life group information
+3. **Edit Community Stories**: Modify `src/data/stories.json` to update testimonials
+
+## Easter Sunday Calculation
+
+The website automatically calculates the date of Easter Sunday for the current year using the Meeus/Jones/Butcher algorithm in the `calculateEasterSunday()` function in `dataService.js`.
+
+## Date Calculation
+
+Recurring event dates (like Sundays for weekly services or last Tuesday of the month for Encounter Night) are automatically calculated in the data service.
 
 ## Overview
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { lifeGroupsData } from '../data/dataService';
 
 const PageHeader = ({ title, subtitle, backgroundImage }) => (
   <div className="relative bg-gray-900 py-32">
@@ -24,65 +25,7 @@ const PageHeader = ({ title, subtitle, backgroundImage }) => (
 );
 
 const LifeGroupsSection = () => {
-  const lifeGroups = [
-    {
-      id: 1,
-      name: "Zion",
-      leader: "Yuh-Lin & Joel (Zion 1) / Kaye & Geber (Zion 2)",
-      time: "Wednesday 7:00 PM",
-      location: "Whitlam (Zion 1) / Belconnen (Zion 2)",
-      description: "A vibrant young working adults group focused on deep Bible study and community building.",
-      image: "/images/Lifegroups/Zion.jpg"
-    },
-    {
-      id: 2,
-      name: "Eden",
-      leader: "Abigail & Rishi",
-      time: "Friday 7:00 PM",
-      location: "Denman Prospect",
-      description: "A welcoming family group that combines worship, prayer, and fellowship.",
-      image: "/images/Lifegroups/Eden.jpg"
-    },
-    {
-      id: 3,
-      name: "Bethel",
-      leader: "Sarah Lyn & Jeff",
-      time: "Friday 7:00 PM",
-      location: "Denman Prospect",
-      description: "A welcoming family group that combines worship, prayer, and fellowship.",
-      image: "/images/Lifegroups/Bethel.jpg"
-    },
-    {
-      id: 4,
-      name: "Hope on Campus",
-      leader: "Eugene",
-      time: "Wednesday 6:30 PM",
-      location: "ANU Campus / UC Campus",
-      description: "A dynamic student group meeting on campus for fellowship and Bible study.",
-      image: "/images/Lifegroups/HopeOnCampus.jpg",
-      socialLinks: [
-        {
-          name: "ANU Hope on Campus",
-          url: "https://www.facebook.com/ANUHopeOnCampus",
-          type: "facebook"
-        },
-        {
-          name: "UC Hope on Campus",
-          url: "https://www.facebook.com/UCHopeOnCampus",
-          type: "facebook"
-        }
-      ]
-    },
-    {
-      id: 5,
-      name: "Ablaze",
-      leader: "Andrew & Illy",
-      time: "Friday 7:00 PM",
-      location: "Woden",
-      description: "Our youth group for teenagers, full of energy and passion for God.",
-      image: "/images/Lifegroups/Ablaze.jpg"
-    },
-  ];
+  const lifeGroups = lifeGroupsData.lifeGroups;
 
   return (
     <div className="py-16 bg-gray-50">
