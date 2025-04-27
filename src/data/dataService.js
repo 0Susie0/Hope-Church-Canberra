@@ -393,7 +393,7 @@ const visitFaqData = [
   },
   {
     question: 'How do I join the church?',
-    answer: 'We regularly hold new member classes that introduce the church\'s faith, values, and operations. After completing the course, you can apply to become a formal member. Please contact us at hopechurchact@gmail.com to learn about the next course schedule.'
+    answer: 'Our community is open and inclusive. There is no formal process required and we\'d be delighted to have you join us for worship. If you have any questions or would like to get more involved, our welcome team is always available to chat after the service.'
   },
   {
     question: 'Is parking available?',
