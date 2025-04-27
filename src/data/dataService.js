@@ -145,6 +145,17 @@ const generateEventInstances = () => {
     }))
   );
   
+  // Water Baptism (3 times a year)
+  // Create 3 events per year, but with null dates to show "Date and time to be announced"
+  for (let i = 0; i < 3; i++) {
+    instances.push({
+      id: `water-baptism-${currentYear}-${i}`,
+      ...eventsData.recurringEvents.waterBaptism,
+      date: null,
+      recurrencePattern: "3 times a year"
+    });
+  }
+  
   // Annual Events
   eventsData.annualEvents.forEach(event => {
     const annualEvent = { ...event };
@@ -179,7 +190,7 @@ const getFilteredEvents = () => {
   const now = new Date();
   
   // Identify recurring event types from their IDs
-  const recurringTypes = ['sunday-service', 'kids-church', 'encounter-night', 'community-service', 'worship-night'];
+  const recurringTypes = ['sunday-service', 'kids-church', 'encounter-night', 'community-service', 'worship-night', 'water-baptism'];
   
   // Group events by recurring type
   const eventsByType = {};

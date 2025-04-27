@@ -34,6 +34,14 @@
       "image": "/images/Events/Community Service.jpg",
       "category": "Service",
       "recurrencePattern": "Monthly on Saturdays"
+    },
+    "waterBaptism":{
+      "title": "Water Baptism",
+      "time": "Date and time to be announced",
+      "location": "Location to be announced",
+      "description": "Witness and celebrate new believers taking their next step in faith.",
+      "image": "/images/Events/WaterBaptism.jpg",
+      "category": "Service"
     }
   },
   "annualEvents": [
@@ -78,15 +86,6 @@
         ],
         "notes": "Kids and fluffy pets are welcome."
       }
-    },
-    {
-      "id": "water-baptism",
-      "title": "Water Baptism",
-      "time": "Date and time to be announced",
-      "location": "Location to be announced",
-      "description": "Witness and celebrate new believers taking their next step in faith.",
-      "image": "/images/Events/WaterBaptism.jpg",
-      "category": "Service"
     },
     {
       "id": "heaven-invade",
