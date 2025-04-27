@@ -165,7 +165,12 @@ const CTASection = () => (
         <Link to="/events" className="bg-white text-gray-900 hover:bg-gray-100 font-bold py-3 px-8 rounded-lg transition duration-300">
           View Events
         </Link>
-        <a href="mailto:hopechurchact@gmail.com" className="bg-transparent hover:bg-gray-800 text-white font-bold py-3 px-8 rounded-lg border-2 border-white transition duration-300">
+        <a 
+          href="https://www.facebook.com/HopeCanberra" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="bg-transparent hover:bg-gray-800 text-white font-bold py-3 px-8 rounded-lg border-2 border-white transition duration-300"
+        >
           Contact Us
         </a>
       </div>
