@@ -40,9 +40,9 @@
     {
       "id": "church-camp",
       "title": "Church Camp",
-      "time": "TBC",
-      "location": "TBC",
-      "description": "Three days of outdoor activities, fellowship, and spiritual growth for church families.",
+      "time": "Date and time to be announced",
+      "location": "Location to be announced",
+      "description": "3 days of outdoor activities, fellowship, and spiritual growth for church families.",
       "image": "/images/Church Fire.jpg",
       "category": "Workshop",
       "isMultiDay": true,
@@ -59,8 +59,8 @@
     {
       "id": "womens-fellowship",
       "title": "Women's Morning Tea",
-      "time": "TBC",
-      "location": "TBC",
+      "time": "Date and time to be announced",
+      "location": "Location to be announced",
       "description": "Join us for our first-ever Women's Fellowship — a time to connect, recharge, and grow in faith over warm drinks and heartfelt conversations.",
       "image": "/images/Events/Women's Morning Tea.jpg",
       "category": "Workshop",
@@ -82,8 +82,8 @@
     {
       "id": "water-baptism",
       "title": "Water Baptism",
-      "time": "TBC",
-      "location": "TBC",
+      "time": "Date and time to be announced",
+      "location": "Location to be announced",
       "description": "Witness and celebrate new believers taking their next step in faith.",
       "image": "/images/Events/WaterBaptism.jpg",
       "category": "Service"
@@ -91,8 +91,8 @@
     {
       "id": "heaven-invade",
       "title": "Heaven Invade Worship Concert",
-      "time": "TBC",
-      "location": "TBC",
+      "time": "Date and time to be announced",
+      "location": "Location to be announced",
       "description": "A special concert of worship and praise with our worship team.",
       "image": "/images/Worship3.jpg",
       "category": "Worship"

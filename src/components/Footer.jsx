@@ -60,8 +60,9 @@ function Footer() {
           <div>
             <h4 className="text-xl font-bold mb-4">Contact Us</h4>
             <ul className="space-y-2">
-              <li className="flex items-center">
-                <FaEnvelope className="mr-2" /> <span>hopechurchact@gmail.com</span>
+              <li className="flex items-center">     
+                <FaEnvelope className="mr-2" />
+                  <a href="mailto:hopechurchact@gmail.com" className="hover:text-white text-white">hopechurchact@gmail.com</a>     
               </li>
               <li className="flex items-center">
                 <FaMapMarkerAlt className="mr-2" /> <span>P.O. Box 3444, Belconnen ACT 2616</span>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FaMapMarkerAlt, FaPhoneAlt, FaEnvelope, FaClock } from 'react-icons/fa';
-import { visitFaqData } from '../data/dataService';
+import { FaMapMarkerAlt, FaPhoneAlt, FaEnvelope, FaClock, FaFacebook, FaInstagram } from 'react-icons/fa';
+import { visitFaqData, processedEvents, getNextOccurrence } from '../data/dataService';
 import '../styles/VisitUs.css';
 
 const PageHeader = ({ title, subtitle, backgroundImage }) => (
@@ -26,7 +26,11 @@ const PageHeader = ({ title, subtitle, backgroundImage }) => (
   </div>
 );
 
-const LocationInfo = () => (
+const LocationInfo = () => {
+  // Get the next Sunday service from the data service
+  const sundayService = getNextOccurrence("sunday-service");
+
+  return (
   <div className="py-16 bg-white">
     <div className="container mx-auto px-4">
       <div className="flex flex-col md:flex-row md:items-center gap-12">
@@ -50,7 +54,7 @@ const LocationInfo = () => (
             {/* Content overlay */}
             <div className="relative z-10 p-6 text-white">
               <h3 className="text-xl font-semibold mb-3 text-white">Service Information</h3>
-              <p className="mb-3"><span className="font-medium">Service Time:</span> 10:00 AM - 12:30 PM Sundays</p>
+              <p className="mb-3"><span className="font-medium">Service Time:</span> {sundayService.time} Sundays</p>
               <p className="mb-1"><span className="font-medium">Service Location:</span></p>
               <p className="mb-1">T2 Theatre, Level 2</p>
               <p className="mb-1">Lowitja O'Donoghue Cultural Centre</p>
@@ -61,21 +65,35 @@ const LocationInfo = () => (
           
           <div className="bg-gray-50 p-6 rounded-lg shadow-md mb-6">
             <h3 className="text-xl font-semibold mb-3">Contact Information</h3>
-            <p className="flex items-center text-gray-700 mb-2">
+            <div className="flex flex-wrap gap-4 mb-2">
+              <a 
+                href="https://www.facebook.com/HopeCanberra" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="flex items-center text-gray-700 hover:text-blue-600 transition-colors"
+              >
+                <FaFacebook className="w-5 h-5 mr-2" />
+                <span>Facebook</span>
+              </a>
+              
+              <a 
+                href="https://www.instagram.com/hopecanberra/" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="flex items-center text-gray-700 hover:text-pink-600 transition-colors"
+              >
+                <FaInstagram className="w-5 h-5 mr-2" />
+                <span>Instagram</span>
+              </a>
+            </div>
+            <p className="flex items-center text-gray-700 mb-4">
               <svg className="w-5 h-5 mr-2 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path>
                 <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
               </svg>
               <a href="mailto:hopechurchact@gmail.com" className="hover:text-gray-900">hopechurchact@gmail.com</a>
             </p>
-            <p className="flex items-center text-gray-700 mb-2">
-              <svg className="w-5 h-5 mr-2 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd"></path>
-              </svg>
-              <span className="font-medium">Mailing Address:</span>
-            </p>
-            <p className="text-gray-700 ml-7 mb-1">P.O. Box 3444</p>
-            <p className="text-gray-700 ml-7">Belconnen ACT 2616</p>
+            
           </div>
           
           <div className="bg-gray-50 p-6 rounded-lg shadow-md">
@@ -114,7 +132,7 @@ const LocationInfo = () => (
       </div>
     </div>
   </div>
-);
+)};
 
 const VisitFAQ = () => {
   return (

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { DateTime } from 'luxon';
 import { 
   storiesData, 
   getNextOccurrence, 
@@ -35,36 +34,36 @@ const HeroSection = () => (
   </div>
 );
 
-const ServiceInfo = () => (
-  <div className="bg-white py-16">
-    <div className="container mx-auto px-4">
-      <div className="text-center mb-12">
-        <h2 className="text-3xl font-bold mb-2 text-gray-900">Service Times & Locations</h2>
-        <div className="w-20 h-1 bg-black mx-auto"></div>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 max-w-4xl mx-auto">
-        <div className="bg-gray-50 p-6 rounded-lg shadow-md">
-          <h3 className="text-xl font-semibold mb-3 text-gray-900">Sunday Service</h3>
-          <p className="mb-2 text-gray-700">Sunday 10:00 AM - 12:30 PM</p>
-          <p className="text-gray-700">T2 Theatre, Level 2
-Lowitja O'Donoghue Cultural Centre
-The Australian National University
-153 Tangney Rd, Acton ACT</p>
+const ServiceInfo = () => {
+  // Get service information from data service
+  const sundayService = getNextOccurrence("sunday-service");
+  const kidsChurch = getNextOccurrence("kids-church");
+  
+  return (
+    <div className="bg-white py-16">
+      <div className="container mx-auto px-4">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold mb-2 text-gray-900">Service Times & Locations</h2>
+          <div className="w-20 h-1 bg-black mx-auto"></div>
         </div>
         
-        <div className="bg-gray-50 p-6 rounded-lg shadow-md">
-          <h3 className="text-xl font-semibold mb-3 text-gray-900">Kids Church</h3>
-          <p className="mb-2 text-gray-700">Sunday 10:00 AM - 12:30 PM</p>
-          <p className="text-gray-700">T2 Theatre, Level 2
-Lowitja O'Donoghue Cultural Centre
-The Australian National University
-153 Tangney Rd, Acton ACT</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          <div className="bg-gray-50 p-6 rounded-lg shadow-md">
+            <h3 className="text-xl font-semibold mb-3 text-gray-900">{sundayService.title}</h3>
+            <p className="mb-2 text-gray-700">Sunday {sundayService.time}</p>
+            <p className="text-gray-700">{sundayService.location}</p>
+          </div>
+          
+          <div className="bg-gray-50 p-6 rounded-lg shadow-md">
+            <h3 className="text-xl font-semibold mb-3 text-gray-900">{kidsChurch.title}</h3>
+            <p className="mb-2 text-gray-700">Sunday {kidsChurch.time}</p>
+            <p className="text-gray-700">{kidsChurch.location}</p>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 const ImageCarousel = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -170,7 +169,7 @@ const UpcomingEvents = () => {
             <div className="p-6">
               <div className="text-sm text-gray-600 mb-2">{formatDate(nextChurchCamp)}</div>
               <h3 className="text-xl font-semibold mb-2 text-gray-900">Church Camp</h3>
-              <p className="text-gray-600 mb-4 text-justify">Three days of outdoor activities, fellowship, and spiritual growth for the church families.</p>
+              <p className="text-gray-600 mb-4 text-justify">3 days of outdoor activities, fellowship, and spiritual growth for the church families.</p>
               <Link to={`/events/church-camp-${currentYear}`} className="text-gray-700 hover:text-black font-medium">
                 Learn More →
               </Link>
