@@ -3,7 +3,7 @@
     "sundayService": {
       "title": "Sunday Service",
       "time": "10:00 AM",
-      "location": "T2 Theatre, Lowitja O'Donoghue Cultural Centre, ANU",
+      "location": "T2 Theatre Level 2, Lowitja O'Donoghue Cultural Centre, The Australian National University, 153 Tangney Rd, Acton ACT",
       "description": "Join us for our weekly worship service.",
       "image": "/images/Events/SundayService.jpg",
       "category": "Service"
@@ -11,7 +11,7 @@
     "kidsChurch": {
       "title": "Kids Church",
       "time": "10:00 AM",
-      "location": "T2 Theatre, Lowitja O'Donoghue Cultural Centre, ANU",
+      "location": "T2 Theatre Level 2, Lowitja O'Donoghue Cultural Centre, The Australian National University, 153 Tangney Rd, Acton ACT",
       "description": "A special program for children with games, stories, and activities.",
       "image": "/images/Events/KidsChurch.jpg",
       "category": "Children"

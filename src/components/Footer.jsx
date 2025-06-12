@@ -29,7 +29,7 @@ function Footer() {
           {/* Quick Links */}
           <div>
             <h4 className="text-xl font-bold mb-4">Quick Links</h4>
-            <ul className="space-y-2">
+            <ul className="space-y-2 ml-20">
               <li>
                 <Link to="/" className="text-white hover:text-primary-300 transition-colors">Home</Link>
               </li>

@@ -56,10 +56,7 @@ const LocationInfo = () => {
               <h3 className="text-xl font-semibold mb-3 text-white">Service Information</h3>
               <p className="mb-3"><span className="font-medium">Service Time:</span> {sundayService.time} Sundays</p>
               <p className="mb-1"><span className="font-medium">Service Location:</span></p>
-              <p className="mb-1">T2 Theatre, Level 2</p>
-              <p className="mb-1">Lowitja O'Donoghue Cultural Centre</p>
-              <p className="mb-1">The Australian National University</p>
-              <p>153 Tangney Rd, Acton ACT</p>
+              <p className="mb-1">{sundayService.location}</p>
             </div>
           </div>
           
