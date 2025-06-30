@@ -41,6 +41,30 @@ const OurVision = () => (
   </div>
 );
 
+const TheExtendedFamily = () => (
+  <div className="py-16 bg-white">
+    <div className="container mx-auto px-4">
+      <div className="text-center mb-12">
+        <h2 className="text-3xl font-bold mb-2">The Extended Family</h2>
+        <div className="w-20 h-1 bg-black mx-auto mb-6"></div>
+      </div>
+      <div className="max-w-3xl mx-auto text-center">
+        <img 
+          src="/images/Hope Oceania.png" 
+          alt="Hope Oceania Logo" 
+          className="mx-auto mb-6 rounded-lg shadow-md max-w-xs w-full"
+        />
+        <p className="text-xl text-gray-800 mb-4">
+          Hope Churches across Australia: <a href="https://www.himoceania.org/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">https://www.himoceania.org/</a>
+        </p>
+        <p className="text-lg text-gray-700">
+          We are a part of <a href="https://www.byhim.org/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Hope International Ministries</a>, an international movement of churches.
+        </p>
+      </div>
+    </div>
+  </div>
+);
+
 const CoreValues = () => (
   <div className="py-16 bg-gray-50">
     <div className="container mx-auto px-4">
@@ -239,6 +263,7 @@ const About = () => {
       />
       <OurVision />
       <OurLeaders />
+      <TheExtendedFamily />
       <CoreValues />
       
     </div>
