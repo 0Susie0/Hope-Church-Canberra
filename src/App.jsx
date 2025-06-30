@@ -6,7 +6,7 @@ import About from './pages/About';
 import LifeGroups from './pages/LifeGroups';
 import Events from './pages/Events';
 import VisitUs from './pages/VisitUs';
-import EventDetails from './pages/EventDetails';
+
 
 function App() {
   return (
@@ -16,7 +16,6 @@ function App() {
         <Route path="about" element={<About />} />
         <Route path="lifegroups" element={<LifeGroups />} />
         <Route path="events" element={<Events />} />
-        <Route path="events/:id" element={<EventDetails />} />
         <Route path="visit" element={<VisitUs />} />
       </Route>
     </Routes>

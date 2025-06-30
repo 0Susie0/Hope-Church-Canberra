@@ -28,8 +28,40 @@ const PageHeader = ({ title, subtitle, backgroundImage }) => (
   </div>
 );
 
+// Reusable EventCard component
+const EventCard = ({ event, facebookLink, formatDate }) => (
+  <div className="bg-white rounded-lg overflow-hidden shadow-md">
+    <div className="h-48 bg-gray-300">
+      <img src={event.image} alt={event.title} className="w-full h-full object-cover" />
+    </div>
+    <div className="p-6">
+      <div className="text-sm text-gray-600 mb-2">
+        {!event.date ? "Date and time to be announced" : formatDate(event)}
+      </div>
+      <h3 className="text-xl font-semibold mb-2">{event.title}</h3>
+      <p className="text-gray-600 mb-4">{event.description}</p>
+      <div className="flex items-center text-gray-700 mb-4">
+        <svg className="w-5 h-5 mr-2 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+          <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd"></path>
+        </svg>
+        {event.location}
+      </div>
+      <a
+        href={facebookLink}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-gray-700 hover:text-black font-medium"
+      >
+        Learn More →
+      </a>
+    </div>
+  </div>
+);
+
 // Event list component
 const EventList = ({ events }) => {
+  // Facebook link for all events
+  const facebookLink = "https://www.facebook.com/HopeCanberra";
   // Format date for display
   const formatDate = (event) => {
     return formatEventDate(event);
@@ -120,30 +152,7 @@ const EventList = ({ events }) => {
           <h3 className="text-2xl font-semibold mb-6 mt-8">Recurring Events</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
             {groupedEvents.recurring.map(event => (
-              <div key={event.id} className="bg-white rounded-lg overflow-hidden shadow-md">
-                <div className="h-48 bg-gray-300">
-                  <img src={event.image} alt={event.title} className="w-full h-full object-cover" />
-                </div>
-                <div className="p-6">
-                  <div className="text-sm text-gray-600 mb-2">
-                    {!event.date ? "Date and time to be announced" : formatDate(event)}
-                  </div>
-                  <h3 className="text-xl font-semibold mb-2">{event.title}</h3>
-                  <p className="text-gray-600 mb-4">{event.description}</p>
-                  <div className="flex items-center text-gray-700 mb-4">
-                    <svg className="w-5 h-5 mr-2 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd"></path>
-                    </svg>
-                    {event.location}
-                  </div>
-                  <Link 
-                    to={`/events/${event.id}`} 
-                    className="text-gray-700 hover:text-black font-medium"
-                  >
-                    Learn More →
-                  </Link>
-                </div>
-              </div>
+              <EventCard key={event.id} event={event} facebookLink={facebookLink} formatDate={formatDate} />
             ))}
           </div>
         </>
@@ -154,30 +163,7 @@ const EventList = ({ events }) => {
           <h3 className="text-2xl font-semibold mb-6 mt-8">Annual Events</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {groupedEvents.annual.map(event => (
-              <div key={event.id} className="bg-white rounded-lg overflow-hidden shadow-md">
-                <div className="h-48 bg-gray-300">
-                  <img src={event.image} alt={event.title} className="w-full h-full object-cover" />
-                </div>
-                <div className="p-6">
-                  <div className="text-sm text-gray-600 mb-2">
-                    {!event.date ? "Date and time to be announced" : formatDate(event)}
-                  </div>
-                  <h3 className="text-xl font-semibold mb-2">{event.title}</h3>
-                  <p className="text-gray-600 mb-4">{event.description}</p>
-                  <div className="flex items-center text-gray-700 mb-4">
-                    <svg className="w-5 h-5 mr-2 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd"></path>
-                    </svg>
-                    {event.location}
-                  </div>
-                  <Link 
-                    to={`/events/${event.id}`} 
-                    className="text-gray-700 hover:text-black font-medium"
-                  >
-                    Learn More →
-                  </Link>
-                </div>
-              </div>
+              <EventCard key={event.id} event={event} facebookLink={facebookLink} formatDate={formatDate} />
             ))}
           </div>
         </>
@@ -192,121 +178,8 @@ const EventList = ({ events }) => {
   );
 };
 
-// Search and filter component
-const SearchAndFilter = ({ onSearch, onFilter }) => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filter, setFilter] = useState({
-    time: 'all', // 'all', 'upcoming', 'past'
-    type: 'all' // 'all', 'Worship', 'Service', 'Workshop', 'Children'
-  });
-  
-  const handleSearch = (e) => {
-    e.preventDefault();
-    onSearch(searchTerm);
-  };
-  
-  const handleFilterChange = (key, value) => {
-    const newFilter = { ...filter, [key]: value };
-    setFilter(newFilter);
-    onFilter(newFilter);
-  };
-  
-  return (
-    <div className="bg-white p-6 rounded-lg shadow-md mb-8">
-      <form onSubmit={handleSearch} className="mb-6">
-        <div className="flex">
-          <input 
-            type="text" 
-            placeholder="Search events..." 
-            className="flex-grow px-4 py-2 border border-gray-300 rounded-l focus:outline-none focus:ring-2 focus:ring-gray-600 focus:border-transparent"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          <button 
-            type="submit" 
-            className="bg-gray-800 text-white px-4 py-2 rounded-r hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-opacity-50"
-          >
-            Search
-          </button>
-        </div>
-      </form>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-gray-700 font-medium mb-2">Filter by Time</label>
-          <select 
-            className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-gray-600 focus:border-transparent"
-            value={filter.time}
-            onChange={(e) => handleFilterChange('time', e.target.value)}
-          >
-            <option value="all">All Events</option>
-            <option value="upcoming">Upcoming Events</option>
-            <option value="past">Past Events</option>
-          </select>
-        </div>
-        
-        <div>
-          <label className="block text-gray-700 font-medium mb-2">Filter by Type</label>
-          <select 
-            className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-gray-600 focus:border-transparent"
-            value={filter.type}
-            onChange={(e) => handleFilterChange('type', e.target.value)}
-          >
-            <option value="all">All Types</option>
-            <option value="Worship">Worship</option>
-            <option value="Service">Service</option>
-            <option value="Workshop">Workshop</option>
-            <option value="Children">Children</option>
-          </select>
-        </div>
-      </div>
-    </div>
-  );
-};
-
 // Main page component
 const Events = () => {
-  // Get the filtered events list (memoized)
-  const filteredEventsList = React.useMemo(() => getFilteredEvents(), []);
-  
-  // Initialize state
-  const [filteredEvents, setFilteredEvents] = useState(filteredEventsList);
-  
-  // Handle search
-  const handleSearch = (searchTerm) => {
-    if (!searchTerm.trim()) {
-      setFilteredEvents(filteredEventsList);
-      return;
-    }
-    
-    const filtered = filteredEventsList.filter(event => 
-      event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      event.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      event.location.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    
-    setFilteredEvents(filtered);
-  };
-  
-  // Handle filter
-  const handleFilter = (filter) => {
-    let filtered = [...filteredEventsList];
-    
-    // Filter by time
-    if (filter.time === 'upcoming') {
-      filtered = filtered.filter(event => event.date && new Date(event.date) >= new Date());
-    } else if (filter.time === 'past') {
-      filtered = filtered.filter(event => event.date && new Date(event.date) < new Date());
-    }
-    
-    // Filter by type
-    if (filter.type !== 'all') {
-      filtered = filtered.filter(event => event.category === filter.type);
-    }
-    
-    setFilteredEvents(filtered);
-  };
-  
   return (
     <div>
       <PageHeader 
@@ -320,9 +193,7 @@ const Events = () => {
           <h2 className="text-3xl font-bold">Church Events</h2>
         </div>
         
-        <SearchAndFilter onSearch={handleSearch} onFilter={handleFilter} />
-        
-        <EventList events={filteredEvents} />
+        <EventList events={getFilteredEvents()} />
       </div>
     </div>
   );
