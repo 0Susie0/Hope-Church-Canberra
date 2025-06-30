@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FaMapMarkerAlt, FaPhoneAlt, FaEnvelope, FaClock, FaFacebook, FaInstagram } from 'react-icons/fa';
-import { visitFaqData, processedEvents, getNextOccurrence } from '../data/dataService';
+import { processedEvents, getNextOccurrence } from '../data/dataService';
 import '../styles/VisitUs.css';
 
 const PageHeader = ({ title, subtitle, backgroundImage }) => (
@@ -131,26 +131,6 @@ const LocationInfo = () => {
   </div>
 )};
 
-const VisitFAQ = () => {
-  return (
-    <section className="visit-faq py-16">
-      <div className="container mx-auto px-4">
-        <h2 className="section-title text-center mb-8">Frequently Asked Questions</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {visitFaqData.map((faq, index) => (
-            <div key={index} className="mb-4">
-              <div className="faq-item">
-                <h3 className="faq-question">{faq.question}</h3>
-                <p className="faq-answer">{faq.answer}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-};
-
 const CTASection = () => (
   <div className="py-16 bg-gray-900">
     <div className="container mx-auto px-4 text-center">
@@ -184,7 +164,6 @@ const VisitUs = () => {
         backgroundImage="/images/Ushering.jpg"
       />
       <LocationInfo />
-      <VisitFAQ />
       <CTASection />
     </div>
   );

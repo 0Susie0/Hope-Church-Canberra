@@ -392,33 +392,6 @@ const getEventById = (id) => {
   return event;
 };
 
-// FAQ data for Visit Us page
-const visitFaqData = [
-  {
-    question: 'What should I know for my first visit?',
-    answer: 'We welcome everyone! You can wear comfortable clothes and arrive 10-15 minutes early. Our welcome team will help you find a seat. You don\'t need to bring anything special, just come with an open mind.'
-  },
-  {
-    question: 'Is childcare available?',
-    answer: 'Yes, we provide Kids Church during Sunday worship. We have dedicated children\'s areas and trained teachers who provide age-appropriate activities and teaching for children of different ages.'
-  },
-  {
-    question: 'How do I join the church?',
-    answer: 'Our community is open and inclusive. There is no formal process required and we\'d be delighted to have you join us for worship. If you have any questions or would like to get more involved, our welcome team is always available to chat after the service.'
-  },
-  {
-    question: 'Is parking available?',
-    answer: 'Yes, ANU has free parking available on Sundays. You can park at the nearby parking lots and walk a short distance to the Cultural Centre Kambri.'
-  },
-  {
-    question: 'What is the worship service format?',
-    answer: 'Our worship includes contemporary music and biblical teaching. There is typically 30-40 minutes of musical worship followed by a 30-40 minute sermon. The entire service lasts about 2.5 hours from 10:00 AM to 12:30 PM.'
-  },
-  {
-    question: 'How can I get involved in serving?',
-    answer: 'We have various service opportunities, including the worship team, welcome team, children\'s ministry, technical support, and more. You can contact us at hopechurchact@gmail.com or speak with any of our team members after the service, and we will help you find a suitable area to serve based on your interests and gifts.'
-  }
-];
 
 export {
   processedEvents,
@@ -430,5 +403,4 @@ export {
   nextYear,
   lifeGroupsData,
   storiesData,
-  visitFaqData
 }; 
