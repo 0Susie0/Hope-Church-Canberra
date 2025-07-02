@@ -45,21 +45,33 @@ const TheExtendedFamily = () => (
   <div className="py-16 bg-white">
     <div className="container mx-auto px-4">
       <div className="text-center mb-12">
-        <h2 className="text-3xl font-bold mb-2">The Extended Family</h2>
+        <h2 className="text-3xl font-bold mb-2 text-black">The Extended Family</h2>
         <div className="w-20 h-1 bg-black mx-auto mb-6"></div>
       </div>
-      <div className="max-w-3xl mx-auto text-center">
-        <img 
-          src="/images/Hope Oceania.png" 
-          alt="Hope Oceania Logo" 
-          className="mx-auto mb-6 rounded-lg shadow-md max-w-xs w-full"
-        />
-        <p className="text-xl text-gray-800 mb-4">
-          Hope Churches across Australia: <a href="https://www.himoceania.org/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">https://www.himoceania.org/</a>
-        </p>
-        <p className="text-lg text-gray-700">
-          We are a part of <a href="https://www.byhim.org/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Hope International Ministries</a>, an international movement of churches.
-        </p>
+      <div className="max-w-5xl mx-auto">
+        <div className="bg-white p-8 rounded-lg shadow-md flex flex-col md:flex-row items-center gap-8 border border-black">
+          <div className="md:w-1/2 w-full">
+            <img 
+              src="/images/Hope Oceania.png" 
+              alt="Hope Oceania Logo" 
+              className="rounded-lg shadow-md w-full h-auto"
+            />
+          </div>
+          <div className="md:w-1/2 w-full flex flex-col justify-center">
+            <h3 className="text-2xl font-semibold mb-4 text-black">Hope Oceania & International</h3>
+            <p className="text-gray-800 mb-4 text-justify leading-relaxed">
+              Hope Church Canberra is part of a global family of vibrant, Bible-based churches:
+            </p>
+            <div className="mb-2">
+              <a href="https://www.himoceania.org/" target="_blank" rel="noopener noreferrer" className="block text-lg font-bold text-black underline hover:text-gray-700 transition mb-1">Hope Oceania</a>
+              <span className="text-gray-700 text-base block mb-2">(Australia & Oceania region)</span>
+            </div>
+            <div>
+              <a href="https://www.byhim.org/" target="_blank" rel="noopener noreferrer" className="block text-lg font-bold text-black underline hover:text-gray-700 transition mb-1">Hope International Ministries</a>
+              <span className="text-gray-700 text-base block">(Global movement)</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>

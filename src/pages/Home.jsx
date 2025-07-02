@@ -4,7 +4,9 @@ import {
   storiesData, 
   getNextOccurrence, 
   currentYear, 
-  formatDate 
+  formatDate, 
+  getFilteredEvents, 
+  facebookLink 
 } from '../data/dataService';
 
 const HeroSection = () => (
@@ -147,12 +149,36 @@ const ImageCarousel = () => {
   );
 };
 
+// Reusable EventCard for events
+const EventCard = ({ event, facebookLink }) => (
+  <div className="bg-white rounded-lg overflow-hidden shadow-md">
+    <div className="h-48 bg-gray-300">
+      <img src={event.image} alt={event.title} className="w-full h-full object-cover" />
+    </div>
+    <div className="p-6">
+      <div className="text-sm text-gray-600 mb-2">
+        {!event.date ? "Date and time to be announced" : formatDate(event)}
+      </div>
+      <h3 className="text-xl font-semibold mb-2 text-gray-900">{event.title}</h3>
+      <p className="text-gray-600 mb-4 text-justify">{event.description}</p>
+      <a
+        href={facebookLink}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-gray-700 hover:text-black font-medium"
+      >
+        Learn More →
+      </a>
+    </div>
+  </div>
+);
+
+// UpcomingEvents now uses event data from dataService
 const UpcomingEvents = () => {
-  // Get the next occurrences for recurring events
-  const nextChurchCamp = getNextOccurrence(`church-camp-${currentYear}`);
-  const nextEncounterNight = getNextOccurrence("encounter-night");
-  const nextCommunityService = getNextOccurrence("community-service");
-  
+  // Get the next few upcoming events (limit to 3 for homepage)
+  const events = getFilteredEvents().slice(0, 3);
+  // Use the imported facebookLink for all events
+
   return (
     <div className="bg-gray-100 py-16">
       <div className="container mx-auto px-4">
@@ -160,51 +186,11 @@ const UpcomingEvents = () => {
           <h2 className="text-3xl font-bold mb-2 text-gray-900">Upcoming Events</h2>
           <div className="w-20 h-1 bg-black mx-auto"></div>
         </div>
-        
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          <div className="bg-white rounded-lg overflow-hidden shadow-md">
-            <div className="h-48 bg-gray-300">
-              <img src="/images/Church Fire.jpg" alt="Church Camp" className="w-full h-full object-cover" />
-            </div>
-            <div className="p-6">
-              <div className="text-sm text-gray-600 mb-2">{formatDate(nextChurchCamp)}</div>
-              <h3 className="text-xl font-semibold mb-2 text-gray-900">Church Camp</h3>
-              <p className="text-gray-600 mb-4 text-justify">3 days of outdoor activities, fellowship, and spiritual growth for the church families.</p>
-              <Link to={`/events/church-camp-${currentYear}`} className="text-gray-700 hover:text-black font-medium">
-                Learn More →
-              </Link>
-            </div>
-          </div>
-          
-          <div className="bg-white rounded-lg overflow-hidden shadow-md">
-            <div className="h-48 bg-gray-300">
-              <img src="/images/Events/Encounter Night.jpg" alt="Encounter Night" className="w-full h-full object-cover" />
-            </div>
-            <div className="p-6">
-              <div className="text-sm text-gray-600 mb-2">{formatDate(nextEncounterNight)}</div>
-              <h3 className="text-xl font-semibold mb-2 text-gray-900">Encounter Night</h3>
-              <p className="text-gray-600 mb-4 text-justify">A night of extended worship and prayer.</p>
-              <Link to="/events/encounter-night-0" className="text-gray-700 hover:text-black font-medium">
-                Learn More →
-              </Link>
-            </div>
-          </div>
-          
-          <div className="bg-white rounded-lg overflow-hidden shadow-md">
-            <div className="h-48 bg-gray-300">
-              <img src="/images/Events/Community Service.jpg" alt="Community Service" className="w-full h-full object-cover" />
-            </div>
-            <div className="p-6">
-              <div className="text-sm text-gray-600 mb-2">{formatDate(nextCommunityService)}</div>
-              <h3 className="text-xl font-semibold mb-2 text-gray-900">Community Service</h3>
-              <p className="text-gray-600 mb-4 text-justify">Join us in serving our local community through various outreach projects.</p>
-              <Link to="/events/community-service-0" className="text-gray-700 hover:text-black font-medium">
-                Learn More →
-              </Link>
-            </div>
-          </div>
+          {events.map(event => (
+            <EventCard key={event.id} event={event} facebookLink={facebookLink} />
+          ))}
         </div>
-        
         <div className="text-center mt-12">
           <Link to="/events" className="bg-black hover:bg-gray-800 text-white font-bold py-3 px-8 rounded-lg transition duration-300">
             View All Events

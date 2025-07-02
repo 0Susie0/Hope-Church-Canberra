@@ -3,6 +3,9 @@ import lifeGroupsData from './lifegroups.json';
 import storiesData from './stories.json';
 import { DateTime } from 'luxon';
 
+// Main church Facebook page link for events and contact
+const facebookLink = "https://www.facebook.com/hopechurchcanberra";
+
 // Helper function to calculate Easter Sunday for a given year
 // This uses the Meeus/Jones/Butcher algorithm
 const calculateEasterSunday = (year) => {
@@ -403,4 +406,5 @@ export {
   nextYear,
   lifeGroupsData,
   storiesData,
+  facebookLink,
 }; 
