@@ -46,7 +46,7 @@ const ServiceInfo = () => {
     {/* heading */}
     <div className="text-center mb-12">
       <h2 className="text-3xl font-bold mb-2 text-gray-900">
-        Service Times &amp; Locations
+        Service Times &amp; Location
       </h2>
       <div className="w-20 h-1 bg-black mx-auto" />
     </div>
