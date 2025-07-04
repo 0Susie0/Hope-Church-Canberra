@@ -39,31 +39,54 @@ const HeroSection = () => (
 const ServiceInfo = () => {
   // Get service information from data service
   const sundayService = getNextOccurrence("sunday-service");
-  const kidsChurch = getNextOccurrence("kids-church");
   
   return (
     <div className="bg-white py-16">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold mb-2 text-gray-900">Service Times & Locations</h2>
-          <div className="w-20 h-1 bg-black mx-auto"></div>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 max-w-4xl mx-auto">
-          <div className="bg-gray-50 p-6 rounded-lg shadow-md">
-            <h3 className="text-xl font-semibold mb-3 text-gray-900">{sundayService.title}</h3>
-            <p className="mb-2 text-gray-700">Sunday {sundayService.time}</p>
-            <p className="text-gray-700">{sundayService.location}</p>
-          </div>
-          
-          <div className="bg-gray-50 p-6 rounded-lg shadow-md">
-            <h3 className="text-xl font-semibold mb-3 text-gray-900">{kidsChurch.title}</h3>
-            <p className="mb-2 text-gray-700">Sunday {kidsChurch.time}</p>
-            <p className="text-gray-700">{kidsChurch.location}</p>
-          </div>
-        </div>
+    <div className="container mx-auto px-4">
+    {/* heading */}
+    <div className="text-center mb-12">
+      <h2 className="text-3xl font-bold mb-2 text-gray-900">
+        Service Times &amp; Locations
+      </h2>
+      <div className="w-20 h-1 bg-black mx-auto" />
+    </div>
+
+    {/* grid wrapper */}
+    <div
+      className="
+        grid grid-cols-1           
+        md:grid-cols-2             
+        gap-8 max-w-4xl mx-auto
+        justify-items-center       
+      "
+    >
+      {/* single card that spans both cols and stays centred */}
+      <div
+        className="
+          bg-gray-50 p-8 md:p-10   
+          rounded-lg shadow-lg
+          w-full max-w-2xl         
+          md:col-span-2            
+        "
+      >
+        <h3 className="text-2xl font-semibold mb-4 text-gray-900">
+          {sundayService.title}
+        </h3>
+
+        <p className="mb-3 text-gray-700">
+          Sunday {sundayService.time}
+        </p>
+
+        <p className="text-gray-700">{sundayService.location}</p>
+
+        <p className="mt-3 text-gray-700">
+          *Kids program available
+        </p>
       </div>
     </div>
+  </div>
+</div>
+
   );
 };
 
