@@ -29,34 +29,39 @@ const PageHeader = ({ title, subtitle, backgroundImage }) => (
 );
 
 // Reusable EventCard component
-const EventCard = ({ event, facebookLink, formatDate }) => (
-  <div className="bg-white rounded-lg overflow-hidden shadow-md">
-    <div className="h-48 bg-gray-300">
-      <img src={event.image} alt={event.title} className="w-full h-full object-cover" />
-    </div>
-    <div className="p-6">
-      <div className="text-sm text-gray-600 mb-2">
-        {!event.date ? "Date and time to be announced" : formatDate(event)}
+const EventCard = ({ event, facebookLink, formatDate }) => {
+  // Use event-specific Facebook link if available, otherwise use the general one
+  const eventFacebookLink = event.facebookLink || facebookLink;
+  
+  return (
+    <div className="bg-white rounded-lg overflow-hidden shadow-md">
+      <div className="h-48 bg-gray-300">
+        <img src={event.image} alt={event.title} className="w-full h-full object-cover" />
       </div>
-      <h3 className="text-xl font-semibold mb-2">{event.title}</h3>
-      <p className="text-gray-600 mb-4">{event.description}</p>
-      <div className="flex items-center text-gray-700 mb-4">
-        <svg className="w-5 h-5 mr-2 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
-          <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd"></path>
-        </svg>
-        {event.location}
+      <div className="p-6">
+        <div className="text-sm text-gray-600 mb-2">
+          {!event.date ? "Date and time to be announced" : formatDate(event)}
+        </div>
+        <h3 className="text-xl font-semibold mb-2">{event.title}</h3>
+        <p className="text-gray-600 mb-4">{event.description}</p>
+        <div className="flex items-center text-gray-700 mb-4">
+          <svg className="w-5 h-5 mr-2 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd"></path>
+          </svg>
+          {event.location}
+        </div>
+        <a
+          href={eventFacebookLink}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-gray-700 hover:text-black font-medium"
+        >
+          Learn More →
+        </a>
       </div>
-      <a
-        href={facebookLink}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-gray-700 hover:text-black font-medium"
-      >
-        Learn More →
-      </a>
     </div>
-  </div>
-);
+  );
+};
 
 // Event list component
 const EventList = ({ events }) => {
@@ -86,8 +91,22 @@ const EventList = ({ events }) => {
       !event.id.includes('water-baptism')
     );
 
-    // Sort recurring events by frequency (weekly first, then monthly, then community service, then water baptism)
+    // Sort recurring events by date first, then by type
     const sortedRecurring = [...recurring].sort((a, b) => {
+      // Sort by date first
+      if (a.date && b.date) {
+        const dateA = new Date(a.date);
+        const dateB = new Date(b.date);
+        // Reset time to start of day for accurate comparison
+        dateA.setHours(0, 0, 0, 0);
+        dateB.setHours(0, 0, 0, 0);
+        const dateComparison = dateA - dateB;
+        if (dateComparison !== 0) return dateComparison;
+      }
+      if (a.date && !b.date) return -1;
+      if (!a.date && b.date) return 1;
+      
+      // If dates are equal or both null, sort by type priority
       // Weekly events first (Sunday service, kids church)
       if ((a.id.includes('sunday-service') || a.id.includes('kids-church')) && 
           !(b.id.includes('sunday-service') || b.id.includes('kids-church'))) {
@@ -122,24 +141,25 @@ const EventList = ({ events }) => {
         return 1;
       }
       
-      // Sort by date
-      if (a.date && b.date) {
-        return new Date(a.date) - new Date(b.date);
-      }
       return 0;
     });
 
-    // Sort annual events by date
+    // Sort annual events by date first, then by title
     const sortedAnnual = [...annual].sort((a, b) => {
+      // Sort by date first
       if (a.date && b.date) {
-        return new Date(a.date) - new Date(b.date);
+        const dateA = new Date(a.date);
+        const dateB = new Date(b.date);
+        // Reset time to start of day for accurate comparison
+        dateA.setHours(0, 0, 0, 0);
+        dateB.setHours(0, 0, 0, 0);
+        return dateA - dateB;
       }
-      // If no date, sort by title
-      if (!a.date && !b.date) {
-        return a.title.localeCompare(b.title);
-      }
-      // Events with dates come first
-      return a.date ? -1 : 1;
+      if (a.date && !b.date) return -1;
+      if (!a.date && b.date) return 1;
+      
+      // If no dates or dates are equal, sort by title
+      return a.title.localeCompare(b.title);
     });
 
     return { recurring: sortedRecurring, annual: sortedAnnual };

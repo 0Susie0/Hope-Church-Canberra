@@ -169,6 +169,9 @@ const generateEventInstances = () => {
     // Special handling for Easter
     if (event.id === 'easter-service') {
       annualEvent.date = easterSunday;
+    } else if (event.id === 'heaven-invade') {
+      // Use the specific date provided in the event data
+      annualEvent.date = event.date;
     } else {
       annualEvent.date = null;
     }
@@ -244,18 +247,11 @@ const getFilteredEvents = () => {
       // Sort by date (ascending)
       futureEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
       
-      // Add the nearest one (if exists)
+      // Add the nearest future event (if exists)
       if (futureEvents.length > 0) {
         nearestWeeklyEvents.push(futureEvents[0]);
-      } else {
-        // If no future events, add the last past occurrence
-        const pastEvents = eventsByType[type].sort((a, b) => 
-          a.date && b.date ? new Date(b.date) - new Date(a.date) : 0
-        );
-        if (pastEvents.length > 0) {
-          nearestWeeklyEvents.push(pastEvents[0]);
-        }
       }
+      // No fallback to past events - only show future events
     }
   });
   
@@ -272,22 +268,46 @@ const getFilteredEvents = () => {
     // Sort by date (ascending)
     futureEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
     
-    // Add only the nearest occurrence
+    // Add only the nearest future occurrence
     if (futureEvents.length > 0) {
       nearestMonthlyEvents.push(futureEvents[0]);
-    } else {
-      // If no future events, add the last past occurrence
-      const pastEvents = eventsByType['encounter-night'].sort((a, b) => 
-        a.date && b.date ? new Date(b.date) - new Date(a.date) : 0
-      );
-      if (pastEvents.length > 0) {
-        nearestMonthlyEvents.push(pastEvents[0]);
-      }
     }
+    // No fallback to past events - only show future events
   }
   
-  // Combine one-time events with nearest recurring events
-  return [...oneTimeEvents, ...nearestWeeklyEvents, ...nearestMonthlyEvents];
+  // Filter one-time events to only include future events
+  const futureOneTimeEvents = oneTimeEvents.filter(event => {
+    if (!event.date) return true; // Keep events without dates
+    const eventDate = new Date(event.date);
+    eventDate.setHours(0, 0, 0, 0);
+    return eventDate >= now;
+  });
+  
+  // Combine future one-time events with nearest recurring events
+  const allEvents = [...futureOneTimeEvents, ...nearestWeeklyEvents, ...nearestMonthlyEvents];
+  
+  // Sort events by date (chronological order from current date forward)
+  return allEvents.sort((a, b) => {
+    const now = new Date();
+    now.setHours(0, 0, 0, 0); // Reset time to start of day for accurate comparison
+    
+    // Events without dates go to the end
+    if (!a.date && !b.date) {
+      return 0; // Keep original order for events without dates
+    }
+    if (!a.date) return 1; // Events without dates go after events with dates
+    if (!b.date) return -1; // Events with dates go before events without dates
+    
+    const dateA = new Date(a.date);
+    const dateB = new Date(b.date);
+    
+    // Reset time to start of day for accurate comparison
+    dateA.setHours(0, 0, 0, 0);
+    dateB.setHours(0, 0, 0, 0);
+    
+    // Sort by date (ascending - earliest first)
+    return dateA - dateB;
+  });
 };
 
 // Format date for display

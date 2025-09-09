@@ -173,28 +173,33 @@ const ImageCarousel = () => {
 };
 
 // Reusable EventCard for events
-const EventCard = ({ event, facebookLink }) => (
-  <div className="bg-white rounded-lg overflow-hidden shadow-md">
-    <div className="h-48 bg-gray-300">
-      <img src={event.image} alt={event.title} className="w-full h-full object-cover" />
-    </div>
-    <div className="p-6">
-      <div className="text-sm text-gray-600 mb-2">
-        {!event.date ? "Date and time to be announced" : formatDate(event)}
+const EventCard = ({ event, facebookLink }) => {
+  // Use event-specific Facebook link if available, otherwise use the general one
+  const eventFacebookLink = event.facebookLink || facebookLink;
+  
+  return (
+    <div className="bg-white rounded-lg overflow-hidden shadow-md">
+      <div className="h-48 bg-gray-300">
+        <img src={event.image} alt={event.title} className="w-full h-full object-cover" />
       </div>
-      <h3 className="text-xl font-semibold mb-2 text-gray-900">{event.title}</h3>
-      <p className="text-gray-600 mb-4 text-justify">{event.description}</p>
-      <a
-        href={facebookLink}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-gray-700 hover:text-black font-medium"
-      >
-        Learn More →
-      </a>
+      <div className="p-6">
+        <div className="text-sm text-gray-600 mb-2">
+          {!event.date ? "Date and time to be announced" : formatDate(event)}
+        </div>
+        <h3 className="text-xl font-semibold mb-2 text-gray-900">{event.title}</h3>
+        <p className="text-gray-600 mb-4 text-justify">{event.description}</p>
+        <a
+          href={eventFacebookLink}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-gray-700 hover:text-black font-medium"
+        >
+          Learn More →
+        </a>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 // UpcomingEvents now uses event data from dataService
 const UpcomingEvents = () => {

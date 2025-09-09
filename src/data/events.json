@@ -89,12 +89,14 @@
     },
     {
       "id": "heaven-invade",
-      "title": "Heaven Invade Worship Concert",
-      "time": "Date and time to be announced",
-      "location": "Location to be announced",
+      "title": "Heaven Invade Worship",
+      "date": "2025-09-27",
+      "time": "4:00 PM",
+      "location": "T2 Theatre, Lowitja O'Donoghue Cultural Centre, ANU",
       "description": "A special concert of worship and praise with our worship team.",
       "image": "/images/Worship3.jpg",
-      "category": "Worship"
+      "category": "Worship",
+      "facebookLink": "https://www.facebook.com/share/19go2esGLW/"
     },
     {
       "id": "easter-service",
