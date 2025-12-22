@@ -3,11 +3,18 @@ import lifeGroupsData from './lifegroups.json';
 import storiesData from './stories.json';
 import { DateTime } from 'luxon';
 
-// Main church Facebook page link for events and contact
-const facebookLink = "https://www.facebook.com/hopechurchcanberra";
+// Constants
+const FACEBOOK_LINK = "https://www.facebook.com/hopechurchcanberra";
+const RECURRING_TYPES = ['sunday-service', 'kids-church', 'encounter-night', 'community-service', 'water-baptism'];
+const WEEKS_PER_YEAR = 104; // Approximate weeks in 2 years
+const MONTHS_PER_YEAR = 24; // 2 years worth of months
+const LAST_WEEK_OF_MONTH_THRESHOLD = 20; // Threshold to identify "last week" pattern
 
-// Helper function to calculate Easter Sunday for a given year
-// This uses the Meeus/Jones/Butcher algorithm
+// Get current year and next year
+const currentYear = DateTime.now().year;
+const nextYear = currentYear + 1;
+
+// Helper function to calculate Easter Sunday for a given year (Meeus/Jones/Butcher algorithm)
 const calculateEasterSunday = (year) => {
   const a = year % 19;
   const b = Math.floor(year / 100);
@@ -24,15 +31,12 @@ const calculateEasterSunday = (year) => {
   const month = Math.floor((h + l - 7 * m + 114) / 31);
   const day = ((h + l - 7 * m + 114) % 31) + 1;
   
-  // Return date in ISO format (YYYY-MM-DD)
   return `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
 };
 
-// Helper function to generate dates that fall on a specific day of week
+// Generate dates that fall on a specific day of week
 const generateDatesForDayOfWeek = (startYear, endYear, dayOfWeek, count) => {
   const dates = [];
-  
-  // Create a DateTime object for January 1st of the start year
   let current = DateTime.local(startYear, 1, 1);
   
   // Move to the first occurrence of the desired day of week
@@ -49,90 +53,95 @@ const generateDatesForDayOfWeek = (startYear, endYear, dayOfWeek, count) => {
   return dates;
 };
 
-// Helper function to generate monthly dates that fall on a specific day of week
+// Generate monthly dates that fall on a specific day of week
 const generateMonthlyDatesForDayOfWeek = (startYear, endYear, dayOfWeek, weekOfMonth, count) => {
   const dates = [];
-  
-  // Create a DateTime object for January 1st of the start year
   let current = DateTime.local(startYear, 1, 1);
+  const isLastWeekOfMonth = weekOfMonth >= LAST_WEEK_OF_MONTH_THRESHOLD;
   
-  // For last Tuesday of the month (Encounter Night)
-  const isLastWeekOfMonth = weekOfMonth >= 20;
-  
-  // Generate dates until we have enough or exceed the end year
   while (dates.length < count && current.year <= endYear) {
-    // Find the first occurrence of the day in the month
     let targetDate = current.set({ day: 1 });
+    
+    // Find the first occurrence of the day in the month
     while (targetDate.weekday !== dayOfWeek) {
       targetDate = targetDate.plus({ days: 1 });
     }
     
     if (isLastWeekOfMonth) {
-      // For "last Tuesday of month" type events
-      // Find the last day of the month
+      // Find the last occurrence of the day in the month
       const lastDay = current.endOf('month');
-      // Start from the last day and go backwards until we find the right weekday
       let lastOccurrence = lastDay;
       while (lastOccurrence.weekday !== dayOfWeek) {
         lastOccurrence = lastOccurrence.minus({ days: 1 });
       }
       targetDate = lastOccurrence;
-    } else {
-      // Adjust to the specified week of the month (e.g., 4th Tuesday)
-      if (weekOfMonth > 1) {
-        targetDate = targetDate.plus({ weeks: weekOfMonth - 1 });
-        
-        // If this pushes us into the next month, use the last occurrence in the current month
-        if (targetDate.month !== current.month) {
-          targetDate = targetDate.minus({ weeks: 1 });
-        }
+    } else if (weekOfMonth > 1) {
+      // Adjust to the specified week of the month
+      targetDate = targetDate.plus({ weeks: weekOfMonth - 1 });
+      // If this pushes us into the next month, use the last occurrence in the current month
+      if (targetDate.month !== current.month) {
+        targetDate = targetDate.minus({ weeks: 1 });
       }
     }
     
-    // Add the date if it's still in the target year range
     if (targetDate.year <= endYear && targetDate.year >= startYear) {
       dates.push(targetDate.toISODate());
     }
     
-    // Move to the next month
     current = current.plus({ months: 1 });
   }
   
   return dates;
 };
 
-// Get current year and next year
-const currentYear = 2025; // Set to 2025 as specified
-const nextYear = currentYear + 1;
+// Apply location overrides to an event based on date
+const applyLocationOverride = (event, date) => {
+  if (!event.locationOverrides || !date) return event;
+  
+  const override = event.locationOverrides.find(override => override.date === date);
+  if (override) {
+    return { ...event, location: override.location };
+  }
+  
+  return event;
+};
 
-// Get Easter Sunday for current year
-const easterSunday = calculateEasterSunday(currentYear);
+// Create event instance with location override handling
+const createEventInstance = (eventTemplate, date, idPrefix, index) => {
+  const event = applyLocationOverride(eventTemplate, date);
+  const { locationOverrides, ...eventData } = event;
+  
+  return {
+    id: `${idPrefix}-${index}`,
+    ...eventData,
+    date: date
+  };
+};
 
 // Generate event instances for recurring events
 const generateEventInstances = () => {
   const instances = [];
+  const easterSunday = calculateEasterSunday(currentYear);
   
-  // Sunday Services
+  // Sunday Services with location overrides
+  const sundayDates = generateDatesForDayOfWeek(currentYear, nextYear, 7, WEEKS_PER_YEAR);
   instances.push(
-    ...generateDatesForDayOfWeek(currentYear, nextYear, 7, 104).map((date, i) => ({
-      id: `sunday-service-${i}`,
-      ...eventsData.recurringEvents.sundayService,
-      date: date
-    }))
+    ...sundayDates.map((date, i) => 
+      createEventInstance(eventsData.recurringEvents.sundayService, date, 'sunday-service', i)
+    )
   );
   
-  // Kids Church
+  // Kids Church with location overrides
   instances.push(
-    ...generateDatesForDayOfWeek(currentYear, nextYear, 7, 104).map((date, i) => ({
-      id: `kids-church-${i}`,
-      ...eventsData.recurringEvents.kidsChurch,
-      date: date
-    }))
+    ...sundayDates.map((date, i) => 
+      createEventInstance(eventsData.recurringEvents.kidsChurch, date, 'kids-church', i)
+    )
   );
   
-  // Encounter Night
+  // Encounter Night (monthly)
+  const encounterDates = generateMonthlyDatesForDayOfWeek(currentYear, nextYear, 2, 99, MONTHS_PER_YEAR);
   instances.push(
-    ...generateMonthlyDatesForDayOfWeek(currentYear, nextYear, 2, 99, 24).map((date, i) => ({
+    ...encounterDates.map((date, i) => ({
       id: `encounter-night-${i}`,
       ...eventsData.recurringEvents.encounterNight,
       date: date
@@ -140,8 +149,9 @@ const generateEventInstances = () => {
   );
   
   // Community Service
+  const communityDates = generateDatesForDayOfWeek(currentYear, nextYear, 6, WEEKS_PER_YEAR);
   instances.push(
-    ...generateDatesForDayOfWeek(currentYear, nextYear, 6, 104).map((date, i) => ({
+    ...communityDates.map((date, i) => ({
       id: `community-service-${i}`,
       ...eventsData.recurringEvents.communityService,
       date: null
@@ -149,7 +159,6 @@ const generateEventInstances = () => {
   );
   
   // Water Baptism (3 times a year)
-  // Create 3 events per year, but with null dates to show "Date and time to be announced"
   for (let i = 0; i < 3; i++) {
     instances.push({
       id: `water-baptism-${currentYear}-${i}`,
@@ -162,21 +171,17 @@ const generateEventInstances = () => {
   // Annual Events
   eventsData.annualEvents.forEach(event => {
     const annualEvent = { ...event };
-    
-    // Add year suffix to id
     annualEvent.id = `${event.id}-${currentYear}`;
     
-    // Special handling for Easter
+    // Set date based on event type
     if (event.id === 'easter-service') {
       annualEvent.date = easterSunday;
     } else if (event.id === 'heaven-invade') {
-      // Use the specific date provided in the event data
       annualEvent.date = event.date;
     } else {
       annualEvent.date = null;
     }
     
-    // Add endDate for multi-day events if needed
     if (event.isMultiDay) {
       annualEvent.endDate = null;
     }
@@ -190,124 +195,119 @@ const generateEventInstances = () => {
 // Process all events with calculated dates
 const processedEvents = generateEventInstances();
 
-// Get the filtered events (showing only nearest future occurrences of recurring events)
-const getFilteredEvents = () => {
-  // Get current date
-  const now = new Date();
+// Helper: Check if event is future or has no date
+const isFutureOrNoDate = (event, now) => {
+  if (!event.date) return true;
+  const eventDate = DateTime.fromISO(event.date).startOf('day');
+  return eventDate >= now.startOf('day');
+};
+
+// Helper: Sort events by date (events without dates go to end)
+const sortEventsByDate = (a, b) => {
+  if (!a.date && !b.date) return 0;
+  if (!a.date) return 1;
+  if (!b.date) return -1;
   
-  // Identify recurring event types from their IDs
-  const recurringTypes = ['sunday-service', 'kids-church', 'encounter-night', 'community-service', 'worship-night', 'water-baptism'];
-  
-  // Group events by recurring type
+  const dateA = DateTime.fromISO(a.date).startOf('day');
+  const dateB = DateTime.fromISO(b.date).startOf('day');
+  return dateA - dateB;
+};
+
+// Helper: Group events by type
+const groupEventsByType = () => {
   const eventsByType = {};
-  recurringTypes.forEach(type => {
+  const oneTimeEvents = [];
+  
+  RECURRING_TYPES.forEach(type => {
     eventsByType[type] = [];
   });
   
-  // Separate recurring events from one-time events
-  const oneTimeEvents = [];
-  const weeklyRecurringEvents = [];
-  const monthlyRecurringEvents = [];
-  
   processedEvents.forEach(event => {
-    let isRecurring = false;
+    const isRecurring = RECURRING_TYPES.some(type => event.id.includes(type));
     
-    // Check if this is a recurring event
-    for (const type of recurringTypes) {
-      if (event.id.includes(type)) {
-        eventsByType[type].push(event);
-        
-        // Special handling for monthly events like Encounter Night
-        if (type === 'encounter-night') {
-          monthlyRecurringEvents.push(event);
-        } else {
-          weeklyRecurringEvents.push(event);
-        }
-        
-        isRecurring = true;
-        break;
-      }
-    }
-    
-    // If not recurring, add to one-time events
-    if (!isRecurring) {
+    if (isRecurring) {
+      const type = RECURRING_TYPES.find(t => event.id.includes(t));
+      eventsByType[type].push(event);
+    } else {
       oneTimeEvents.push(event);
     }
   });
   
-  // Find nearest future occurrence for each weekly recurring event type
-  const nearestWeeklyEvents = [];
+  return { eventsByType, oneTimeEvents };
+};
+
+// Helper: Get nearest future event from a list
+const getNearestFutureEvent = (events, now) => {
+  const futureEvents = events
+    .filter(e => isFutureOrNoDate(e, now))
+    .sort(sortEventsByDate);
   
-  // Process weekly recurring events
-  Object.keys(eventsByType).forEach(type => {
-    if (type !== 'encounter-night' && eventsByType[type].length > 0) {
-      // Filter future events
-      const futureEvents = eventsByType[type].filter(e => e.date && new Date(e.date) >= now);
-      
-      // Sort by date (ascending)
-      futureEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
-      
-      // Add the nearest future event (if exists)
-      if (futureEvents.length > 0) {
-        nearestWeeklyEvents.push(futureEvents[0]);
+  return futureEvents.length > 0 ? futureEvents[0] : null;
+};
+
+// Get filtered events (showing only nearest future occurrences of recurring events)
+const getFilteredEvents = () => {
+  const now = DateTime.now();
+  const { eventsByType, oneTimeEvents } = groupEventsByType();
+  
+  // Get nearest future occurrence for each recurring event type
+  const nearestRecurringEvents = [];
+  
+  RECURRING_TYPES.forEach(type => {
+    if (eventsByType[type].length > 0) {
+      const nearest = getNearestFutureEvent(eventsByType[type], now);
+      if (nearest) {
+        nearestRecurringEvents.push(nearest);
       }
-      // No fallback to past events - only show future events
     }
   });
-  
-  // For monthly events like Encounter Night, show only the nearest one
-  const nearestMonthlyEvents = [];
-  
-  // Process Encounter Night events
-  if (eventsByType['encounter-night'] && eventsByType['encounter-night'].length > 0) {
-    // Filter future events
-    const futureEvents = eventsByType['encounter-night'].filter(e => 
-      e.date && new Date(e.date) >= now
-    );
-    
-    // Sort by date (ascending)
-    futureEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
-    
-    // Add only the nearest future occurrence
-    if (futureEvents.length > 0) {
-      nearestMonthlyEvents.push(futureEvents[0]);
-    }
-    // No fallback to past events - only show future events
-  }
   
   // Filter one-time events to only include future events
-  const futureOneTimeEvents = oneTimeEvents.filter(event => {
-    if (!event.date) return true; // Keep events without dates
-    const eventDate = new Date(event.date);
-    eventDate.setHours(0, 0, 0, 0);
-    return eventDate >= now;
-  });
+  const futureOneTimeEvents = oneTimeEvents.filter(event => isFutureOrNoDate(event, now));
   
-  // Combine future one-time events with nearest recurring events
-  const allEvents = [...futureOneTimeEvents, ...nearestWeeklyEvents, ...nearestMonthlyEvents];
+  // Combine and sort all events
+  return [...futureOneTimeEvents, ...nearestRecurringEvents].sort(sortEventsByDate);
+};
+
+// Get all future events (both recurring and annual) - one instance per event type
+const getAllFutureEvents = () => {
+  const now = DateTime.now();
+  const { eventsByType, oneTimeEvents } = groupEventsByType();
   
-  // Sort events by date (chronological order from current date forward)
-  return allEvents.sort((a, b) => {
-    const now = new Date();
-    now.setHours(0, 0, 0, 0); // Reset time to start of day for accurate comparison
-    
-    // Events without dates go to the end
-    if (!a.date && !b.date) {
-      return 0; // Keep original order for events without dates
+  // Get nearest future occurrence for each recurring event type
+  const nearestRecurringEvents = [];
+  
+  RECURRING_TYPES.forEach(type => {
+    if (eventsByType[type].length > 0) {
+      const nearest = getNearestFutureEvent(eventsByType[type], now);
+      if (nearest) {
+        nearestRecurringEvents.push(nearest);
+      }
     }
-    if (!a.date) return 1; // Events without dates go after events with dates
-    if (!b.date) return -1; // Events with dates go before events without dates
-    
-    const dateA = new Date(a.date);
-    const dateB = new Date(b.date);
-    
-    // Reset time to start of day for accurate comparison
-    dateA.setHours(0, 0, 0, 0);
-    dateB.setHours(0, 0, 0, 0);
-    
-    // Sort by date (ascending - earliest first)
-    return dateA - dateB;
   });
+  
+  // Filter one-time events to only include future events
+  const futureOneTimeEvents = oneTimeEvents.filter(event => isFutureOrNoDate(event, now));
+  
+  // Combine and sort all events
+  return [...futureOneTimeEvents, ...nearestRecurringEvents].sort(sortEventsByDate);
+};
+
+// Get past events (for display in a separate section) - only Easter Sunday service
+const getPastEvents = () => {
+  const now = DateTime.now().startOf('day');
+  
+  return processedEvents
+    .filter(event => {
+      if (!event.date || !event.id.includes('easter-service')) return false;
+      const eventDate = DateTime.fromISO(event.date).startOf('day');
+      return eventDate < now;
+    })
+    .sort((a, b) => {
+      const dateA = DateTime.fromISO(a.date);
+      const dateB = DateTime.fromISO(b.date);
+      return dateB - dateA; // Most recent first
+    });
 };
 
 // Format date for display
@@ -340,85 +340,70 @@ const formatDate = (event) => {
 
 // Get the next occurrence of a recurring event
 const getNextOccurrence = (eventId) => {
-  // Find all occurrences of this event type
   const eventType = eventId.split('-').slice(0, -1).join('-');
   const allEventsOfType = processedEvents.filter(e => e.id.startsWith(eventType));
   
-  // Find future events
-  const now = DateTime.now().setLocale('en');
-  const futureEvents = allEventsOfType.filter(e => 
-    e.date && DateTime.fromISO(e.date).setLocale('en') >= now
-  );
-  
-  // Sort by date (ascending) and get the nearest one
-  futureEvents.sort((a, b) => 
-    DateTime.fromISO(a.date).setLocale('en') < DateTime.fromISO(b.date).setLocale('en') ? -1 : 1
-  );
+  const now = DateTime.now();
+  const futureEvents = allEventsOfType
+    .filter(e => e.date && DateTime.fromISO(e.date) >= now)
+    .sort((a, b) => {
+      const dateA = DateTime.fromISO(a.date);
+      const dateB = DateTime.fromISO(b.date);
+      return dateA < dateB ? -1 : 1;
+    });
   
   return futureEvents.length > 0 ? futureEvents[0] : allEventsOfType[0];
 };
 
 // Get a specific event by ID
 const getEventById = (id) => {
-  // Extract event type from id (for recurring events)
   const eventType = id.split('-')[0];
+  const isRecurring = ['sunday', 'kids', 'encounter', 'community'].includes(eventType);
   
-  // Find event based on full ID or event type for recurring events
-  let event;
-  let isRecurring = false;
-  let recurrencePattern = "";
-  
-  // Check if this is a recurring event type
-  if (['sunday', 'kids', 'encounter', 'community'].includes(eventType)) {
-    isRecurring = true;
-    
-    // Find all events of this type
+  if (isRecurring) {
     const allEventsOfType = processedEvents.filter(e => e.id.includes(eventType));
+    const now = DateTime.now();
     
-    // Find future events of this type (only for events with dates)
-    const now = DateTime.now().setLocale('en');
-    const futureEvents = allEventsOfType.filter(e => 
-      e.date && DateTime.fromISO(e.date).setLocale('en') >= now
-    );
+    const futureEvents = allEventsOfType
+      .filter(e => e.date && DateTime.fromISO(e.date) >= now)
+      .sort((a, b) => {
+        const dateA = DateTime.fromISO(a.date);
+        const dateB = DateTime.fromISO(b.date);
+        return dateA < dateB ? -1 : 1;
+      });
     
-    // Sort by date (ascending) and get the nearest one
-    if (futureEvents.length > 0) {
-      futureEvents.sort((a, b) => 
-        DateTime.fromISO(a.date).setLocale('en') < DateTime.fromISO(b.date).setLocale('en') ? -1 : 1
-      );
-      event = futureEvents[0];
-    } else {
-      event = allEventsOfType[0];
-    }
+    const event = futureEvents.length > 0 ? futureEvents[0] : allEventsOfType[0];
     
-    // Set recurrence pattern based on event type
-    if (eventType === 'sunday') {
-      recurrencePattern = "Every Sunday at 10:00 AM";
-    } else if (eventType === 'kids') {
-      recurrencePattern = "Every Sunday at 10:00 AM";
-    } else if (eventType === 'encounter') {
-      recurrencePattern = "Last Tuesday of each month at 7:00 PM";
-    } else if (eventType === 'community') {
-      recurrencePattern = "Monthly on Saturdays";
-    }
-    
-    // Add recurrence pattern to event
     if (event) {
-      event.isRecurring = isRecurring;
-      event.recurrencePattern = recurrencePattern;
+      const recurrencePatterns = {
+        'sunday': "Every Sunday at 10:00 AM",
+        'kids': "Every Sunday at 10:00 AM",
+        'encounter': "Last Tuesday of each month at 7:00 PM",
+        'community': "Monthly on Saturdays"
+      };
+      
+      return {
+        ...event,
+        isRecurring: true,
+        recurrencePattern: recurrencePatterns[eventType] || ""
+      };
     }
-  } else {
-    // Non-recurring event - find exact match
-    event = processedEvents.find(e => String(e.id) === id);
+    
+    return event;
   }
   
-  return event;
+  // Non-recurring event - find exact match
+  return processedEvents.find(e => String(e.id) === id);
 };
 
+// Export facebookLink as a named export
+const facebookLink = FACEBOOK_LINK;
 
 export {
   processedEvents,
   getFilteredEvents,
+  getAllFutureEvents,
+  getPastEvents,
   formatDate,
   getNextOccurrence,
   getEventById,
@@ -427,4 +412,5 @@ export {
   lifeGroupsData,
   storiesData,
   facebookLink,
-}; 
+  eventsData,
+};

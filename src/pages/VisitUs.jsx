@@ -108,7 +108,8 @@ const LocationInfo = () => {
             {/* Google Map */}
             <div className="h-96 bg-gray-200 rounded-lg overflow-hidden shadow-xl">
               <iframe 
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d6514.359999764052!2d149.1219398!3d-35.2766507!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6b164dee05699c33%3A0x35dc37aecc1fb698!2sCultural%20Centre%20Kambri%20(ANU%20Building%20153)!5e0!3m2!1sen!2sau!4v1745560202371!5m2!1sen!2sau" 
+                //src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d6514.359999764052!2d149.1219398!3d-35.2766507!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6b164dee05699c33%3A0x35dc37aecc1fb698!2sCultural%20Centre%20Kambri%20(ANU%20Building%20153)!5e0!3m2!1sen!2sau!4v1745560202371!5m2!1sen!2sau" 
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d684.3771859154488!2d149.04098747735233!3d-35.319275871494874!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6b17b38196f56d4f%3A0x272dcd7caafbfc2f!2sCoombs%20Community%20Centre!5e0!3m2!1sen!2sau!4v1766387059465!5m2!1sen!2sau"
                 width="100%" 
                 height="100%" 
                 style={{ border: 0 }} 
@@ -118,11 +119,12 @@ const LocationInfo = () => {
                 title="Church Location Map"
               ></iframe>
             </div>
+            
             <div className="bg-gray-100 p-3 rounded-b-lg shadow-md">
-              <p className="text-gray-700 text-center">
+              {/* <p className="text-gray-700 text-center">
                 We are conveniently located within the ANU campus, easily accessible 
                 from the city center and public transportation.
-              </p>
+              </p> */}
             </div>
           </div>
         </div>

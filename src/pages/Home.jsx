@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { DateTime } from 'luxon';
 import { 
   storiesData, 
   getNextOccurrence, 
-  currentYear, 
   formatDate, 
   getFilteredEvents, 
-  facebookLink 
+  facebookLink,
+  eventsData
 } from '../data/dataService';
 
 const HeroSection = () => (
@@ -36,81 +37,99 @@ const HeroSection = () => (
   </div>
 );
 
+// Helper function to format date consistently
+const formatDateDisplay = (dateString) => {
+  return DateTime.fromISO(dateString).setLocale('en').toLocaleString({
+    weekday: 'long',
+    month: 'long', 
+    day: 'numeric',
+    year: 'numeric'
+  });
+};
+
 const ServiceInfo = () => {
-  // Get service information from data service
   const sundayService = getNextOccurrence("sunday-service");
+  const locationOverrides = eventsData.recurringEvents.sundayService.locationOverrides || [];
+  const defaultLocation = eventsData.recurringEvents.sundayService.location;
+  const isLocationChanged = sundayService.location !== defaultLocation;
+  
+  // Get upcoming location overrides
+  const now = DateTime.now();
+  const upcomingLocationOverrides = locationOverrides
+    .filter(override => DateTime.fromISO(override.date) >= now)
+    .sort((a, b) => DateTime.fromISO(a.date) - DateTime.fromISO(b.date));
   
   return (
     <div className="bg-white py-16">
-    <div className="container mx-auto px-4">
-    {/* heading */}
-    <div className="text-center mb-12">
-      <h2 className="text-3xl font-bold mb-2 text-gray-900">
-        Service Time &amp; Location
-      </h2>
-      <div className="w-20 h-1 bg-black mx-auto" />
-    </div>
+      <div className="container mx-auto px-4">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold mb-2 text-gray-900">Service Time &amp; Location</h2>
+          <div className="w-20 h-1 bg-black mx-auto" />
+        </div>
 
-    {/* grid wrapper */}
-    <div
-      className="
-        grid grid-cols-1           
-        md:grid-cols-2             
-        gap-8 max-w-4xl mx-auto
-        justify-items-center       
-      "
-    >
-      {/* single card that spans both cols and stays centred */}
-      <div
-        className="
-          bg-gray-50 p-8 md:p-10   
-          rounded-lg shadow-lg
-          w-full max-w-2xl         
-          md:col-span-2            
-        "
-      >
-        <h3 className="text-2xl font-semibold mb-4 text-gray-900">
-          {sundayService.title}
-        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto justify-items-center">
+          <div className={`p-8 md:p-10 rounded-lg shadow-lg w-full max-w-2xl md:col-span-2 ${
+            isLocationChanged ? 'bg-yellow-50 border-2 border-yellow-400' : 'bg-gray-50'
+          }`}>
+            <h3 className="text-2xl font-semibold mb-4 text-gray-900">{sundayService.title}</h3>
+            <p className="mb-3 text-gray-700">Sunday {sundayService.time}</p>
+            
+            <div className="mb-3">
+              {isLocationChanged && (
+                <div className="mb-2">
+                  <span className="inline-block bg-yellow-400 text-yellow-900 text-xs font-semibold px-3 py-1 rounded-full mb-2">
+                    ⚠️ Location Change
+                  </span>
+                </div>
+              )}
+              <p className={`text-gray-700 ${isLocationChanged ? 'font-semibold text-lg' : ''}`}>
+                {sundayService.location}
+              </p>
+            </div>
 
-        <p className="mb-3 text-gray-700">
-          Sunday {sundayService.time}
-        </p>
+            {upcomingLocationOverrides.length > 0 && (
+              <div className="mt-4 pt-4 border-t border-gray-300">
+                <p className="text-sm font-semibold text-gray-700 mb-2">Upcoming Location Changes:</p>
+                <ul className="space-y-2">
+                  {upcomingLocationOverrides.map((override, index) => (
+                    <li key={index} className="text-sm text-gray-600">
+                      <span className="font-medium">{formatDateDisplay(override.date)}</span>
+                      {' - '}
+                      <span className="text-yellow-700 font-semibold">{override.location}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
-        <p className="text-gray-700">{sundayService.location}</p>
-
-        <p className="mt-3 text-gray-700">
-          *Kids program available
-        </p>
+            <p className="mt-3 text-gray-700">*Kids program available</p>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
-
   );
 };
 
 const ImageCarousel = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
-  
   const slides = storiesData.imageCarousel;
   
-  const goToPrevSlide = () => {
-    setCurrentSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
-  };
-  
-  const goToNextSlide = () => {
-    setCurrentSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
-  };
+  const goToSlide = (index) => setCurrentSlide(index);
+  const goToPrev = () => setCurrentSlide(prev => prev === 0 ? slides.length - 1 : prev - 1);
+  const goToNext = () => setCurrentSlide(prev => prev === slides.length - 1 ? 0 : prev + 1);
   
   return (
     <div className="py-16 bg-white">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold mb-2 text-gray-900">Our Church</h2>
-          <div className="w-20 h-1 bg-black mx-auto mb-4"></div>
+          <div className="w-20 h-1 bg-black mx-auto mb-4" />
           <p className="text-gray-600 max-w-2xl mx-auto text-justify">
-           Hope Church Canberra is a multicultural, vibrant, Spirit-filled community who love God and people. We are firm believers that the church is not a building but a community of people who share lives together and we would love to welcome you!  Our main worship service is held on Sunday mornings in Canberra city, 10 minutes walk from Canberra Centre.  We seek to be a community of Christ centred believers that are inspired by God's Word and Presence!
+            Hope Church Canberra is a multicultural, vibrant, Spirit-filled community who love God and people. 
+            We are firm believers that the church is not a building but a community of people who share lives together 
+            and we would love to welcome you! Our main worship service is held on Sunday mornings in Canberra city, 
+            10 minutes walk from Canberra Centre. We seek to be a community of Christ centred believers that are 
+            inspired by God's Word and Presence!
           </p>
         </div>
         
@@ -124,11 +143,7 @@ const ImageCarousel = () => {
                     index === currentSlide ? 'opacity-100' : 'opacity-0'
                   }`}
                 >
-                  <img 
-                    src={slide.image} 
-                    alt={slide.title} 
-                    className="w-full h-full object-cover"
-                  />
+                  <img src={slide.image} alt={slide.title} className="w-full h-full object-cover" />
                   <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-6">
                     <p className="text-white text-xl">{slide.title}</p>
                   </div>
@@ -138,20 +153,22 @@ const ImageCarousel = () => {
           </div>
           
           <button 
-            onClick={goToPrevSlide}
+            onClick={goToPrev}
             className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-50 hover:bg-opacity-75 rounded-full p-2 focus:outline-none"
+            aria-label="Previous slide"
           >
             <svg className="w-6 h-6 text-gray-800" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd"></path>
+              <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
             </svg>
           </button>
           
           <button 
-            onClick={goToNextSlide}
+            onClick={goToNext}
             className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-50 hover:bg-opacity-75 rounded-full p-2 focus:outline-none"
+            aria-label="Next slide"
           >
             <svg className="w-6 h-6 text-gray-800" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd"></path>
+              <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
             </svg>
           </button>
           
@@ -159,11 +176,12 @@ const ImageCarousel = () => {
             {slides.map((_, index) => (
               <button 
                 key={index} 
-                onClick={() => setCurrentSlide(index)}
-                className={`w-3 h-3 mx-1 rounded-full ${
+                onClick={() => goToSlide(index)}
+                className={`w-3 h-3 mx-1 rounded-full transition-colors ${
                   index === currentSlide ? 'bg-black' : 'bg-gray-300'
                 }`}
-              ></button>
+                aria-label={`Go to slide ${index + 1}`}
+              />
             ))}
           </div>
         </div>
@@ -172,9 +190,7 @@ const ImageCarousel = () => {
   );
 };
 
-// Reusable EventCard for events
 const EventCard = ({ event, facebookLink }) => {
-  // Use event-specific Facebook link if available, otherwise use the general one
   const eventFacebookLink = event.facebookLink || facebookLink;
   
   return (
@@ -201,18 +217,15 @@ const EventCard = ({ event, facebookLink }) => {
   );
 };
 
-// UpcomingEvents now uses event data from dataService
 const UpcomingEvents = () => {
-  // Get the next few upcoming events (limit to 3 for homepage)
   const events = getFilteredEvents().slice(0, 3);
-  // Use the imported facebookLink for all events
 
   return (
     <div className="bg-gray-100 py-16">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold mb-2 text-gray-900">Upcoming Events</h2>
-          <div className="w-20 h-1 bg-black mx-auto"></div>
+          <div className="w-20 h-1 bg-black mx-auto" />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {events.map(event => (
@@ -220,7 +233,10 @@ const UpcomingEvents = () => {
           ))}
         </div>
         <div className="text-center mt-12">
-          <Link to="/events" className="bg-black hover:bg-gray-800 text-white font-bold py-3 px-8 rounded-lg transition duration-300">
+          <Link 
+            to="/events" 
+            className="bg-black hover:bg-gray-800 text-white font-bold py-3 px-8 rounded-lg transition duration-300"
+          >
             View All Events
           </Link>
         </div>

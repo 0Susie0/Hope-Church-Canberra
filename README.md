@@ -101,7 +101,7 @@ All content is managed via JSON files in `src/data/`:
 - **About.jsx:**  
   Church vision, values, and leadership.
 - **Events.jsx:**  
-  Calendar and list views of all events, with filtering and details.
+  Calendar and list views of upcoming events, organized by event type.
 - **EventDetails.jsx:**  
   Detailed information about a specific event.
 - **LifeGroups.jsx:**  

@@ -6,7 +6,17 @@
       "location": "T2 Theatre Level 2, Lowitja O'Donoghue Cultural Centre, The Australian National University, 153 Tangney Rd, Acton ACT",
       "description": "Join us for our weekly worship service.",
       "image": "/images/Events/SundayService.jpg",
-      "category": "Service"
+      "category": "Service",
+      "locationOverrides": [
+        {
+          "date": "2025-12-28",
+          "location": "Coombs Community Centre"
+        },
+        {
+          "date": "2026-01-04",
+          "location": "Coombs Community Centre"
+        }
+      ]
     },
     "kidsChurch": {
       "title": "Kids Church",
@@ -14,7 +24,17 @@
       "location": "T2 Theatre Level 2, Lowitja O'Donoghue Cultural Centre, The Australian National University, 153 Tangney Rd, Acton ACT",
       "description": "A special program for children with games, stories, and activities.",
       "image": "/images/Events/KidsChurch.jpg",
-      "category": "Children"
+      "category": "Children",
+      "locationOverrides": [
+        {
+          "date": "2025-12-28",
+          "location": "Coombs Community Centre"
+        },
+        {
+          "date": "2026-01-04",
+          "location": "Coombs Community Centre"
+        }
+      ]
     },
     "encounterNight": {
       "title": "Encounter Night",
