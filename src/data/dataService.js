@@ -14,7 +14,11 @@ const LAST_WEEK_OF_MONTH_THRESHOLD = 20; // Threshold to identify "last week" pa
 const currentYear = DateTime.now().year;
 const nextYear = currentYear + 1;
 
-// Helper function to calculate Easter Sunday for a given year (Meeus/Jones/Butcher algorithm)
+/**
+ * Calculate Easter Sunday for a given year using the Meeus/Jones/Butcher algorithm
+ * @param {number} year - The year to calculate Easter for
+ * @returns {string} ISO date string (YYYY-MM-DD) of Easter Sunday
+ */
 const calculateEasterSunday = (year) => {
   const a = year % 19;
   const b = Math.floor(year / 100);
@@ -34,7 +38,14 @@ const calculateEasterSunday = (year) => {
   return `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
 };
 
-// Generate dates that fall on a specific day of week
+/**
+ * Generate dates that fall on a specific day of week
+ * @param {number} startYear - Starting year
+ * @param {number} endYear - Ending year
+ * @param {number} dayOfWeek - Day of week (1=Monday, 7=Sunday)
+ * @param {number} count - Maximum number of dates to generate
+ * @returns {Array<string>} Array of ISO date strings
+ */
 const generateDatesForDayOfWeek = (startYear, endYear, dayOfWeek, count) => {
   const dates = [];
   let current = DateTime.local(startYear, 1, 1);
@@ -94,6 +105,12 @@ const generateMonthlyDatesForDayOfWeek = (startYear, endYear, dayOfWeek, weekOfM
   return dates;
 };
 
+// Check if a date is cancelled for an event
+const isDateCancelled = (event, date) => {
+  if (!event.cancellations || !date) return false;
+  return event.cancellations.some(cancellation => cancellation.date === date);
+};
+
 // Apply location overrides to an event based on date
 const applyLocationOverride = (event, date) => {
   if (!event.locationOverrides || !date) return event;
@@ -123,17 +140,21 @@ const generateEventInstances = () => {
   const instances = [];
   const easterSunday = calculateEasterSunday(currentYear);
   
-  // Sunday Services with location overrides
+  // Sunday Services with location overrides and cancellations
   const sundayDates = generateDatesForDayOfWeek(currentYear, nextYear, 7, WEEKS_PER_YEAR);
+  // Filter out cancelled dates
+  const validSundayDates = sundayDates.filter(date => 
+    !isDateCancelled(eventsData.recurringEvents.sundayService, date)
+  );
   instances.push(
-    ...sundayDates.map((date, i) => 
+    ...validSundayDates.map((date, i) => 
       createEventInstance(eventsData.recurringEvents.sundayService, date, 'sunday-service', i)
     )
   );
   
-  // Kids Church with location overrides
+  // Kids Church with location overrides (also cancelled on same dates as Sunday Service)
   instances.push(
-    ...sundayDates.map((date, i) => 
+    ...validSundayDates.map((date, i) => 
       createEventInstance(eventsData.recurringEvents.kidsChurch, date, 'kids-church', i)
     )
   );
@@ -245,8 +266,12 @@ const getNearestFutureEvent = (events, now) => {
   return futureEvents.length > 0 ? futureEvents[0] : null;
 };
 
-// Get filtered events (showing only nearest future occurrences of recurring events)
-const getFilteredEvents = () => {
+/**
+ * Get future events (both recurring and annual) - one instance per event type
+ * @param {boolean} includeAll - If true, includes all future events; if false, only nearest occurrences
+ * @returns {Array} Sorted array of future events
+ */
+const getFutureEvents = (includeAll = false) => {
   const now = DateTime.now();
   const { eventsByType, oneTimeEvents } = groupEventsByType();
   
@@ -269,29 +294,17 @@ const getFilteredEvents = () => {
   return [...futureOneTimeEvents, ...nearestRecurringEvents].sort(sortEventsByDate);
 };
 
-// Get all future events (both recurring and annual) - one instance per event type
-const getAllFutureEvents = () => {
-  const now = DateTime.now();
-  const { eventsByType, oneTimeEvents } = groupEventsByType();
-  
-  // Get nearest future occurrence for each recurring event type
-  const nearestRecurringEvents = [];
-  
-  RECURRING_TYPES.forEach(type => {
-    if (eventsByType[type].length > 0) {
-      const nearest = getNearestFutureEvent(eventsByType[type], now);
-      if (nearest) {
-        nearestRecurringEvents.push(nearest);
-      }
-    }
-  });
-  
-  // Filter one-time events to only include future events
-  const futureOneTimeEvents = oneTimeEvents.filter(event => isFutureOrNoDate(event, now));
-  
-  // Combine and sort all events
-  return [...futureOneTimeEvents, ...nearestRecurringEvents].sort(sortEventsByDate);
-};
+/**
+ * Get filtered events (showing only nearest future occurrences of recurring events)
+ * @returns {Array} Sorted array of future events
+ */
+const getFilteredEvents = () => getFutureEvents(false);
+
+/**
+ * Get all future events (both recurring and annual) - one instance per event type
+ * @returns {Array} Sorted array of future events
+ */
+const getAllFutureEvents = () => getFutureEvents(true);
 
 // Get past events (for display in a separate section) - only Easter Sunday service
 const getPastEvents = () => {
@@ -310,38 +323,99 @@ const getPastEvents = () => {
     });
 };
 
-// Format date for display
+/**
+ * Format date for display
+ * @param {Object} event - Event object with date, time, and optional endDate
+ * @returns {string} Formatted date string
+ */
 const formatDate = (event) => {
   if (!event || !event.date) return "Date to be announced";
   
-  const startDate = DateTime.fromISO(event.date).setLocale('en').toLocaleString({
-    weekday: 'long',
-    month: 'long', 
-    day: 'numeric',
-    year: 'numeric'
-  });
-  
-  if (event.isMultiDay && event.endDate) {
-    const endDate = DateTime.fromISO(event.endDate).setLocale('en').toLocaleString({
+  try {
+    const startDate = DateTime.fromISO(event.date).setLocale('en').toLocaleString({
       weekday: 'long',
       month: 'long', 
       day: 'numeric',
       year: 'numeric'
     });
-    return `${startDate} - ${endDate}`;
+    
+    if (event.isMultiDay && event.endDate) {
+      const endDate = DateTime.fromISO(event.endDate).setLocale('en').toLocaleString({
+        weekday: 'long',
+        month: 'long', 
+        day: 'numeric',
+        year: 'numeric'
+      });
+      return `${startDate} - ${endDate}`;
+    }
+    
+    if (event.time === "TBC" || event.time === "Date and time to be announced") {
+      return `${startDate} (Time to be announced)`;
+    }
+    
+    return `${startDate} at ${event.time}`;
+  } catch (error) {
+    console.error('Error formatting event date:', error);
+    return "Date to be announced";
   }
-  
-  if (event.time === "TBC") {
-    return `${startDate} (Time to be announced)`;
-  }
-  
-  return `${startDate} at ${event.time}`;
 };
 
-// Get the next occurrence of a recurring event
+/**
+ * Get upcoming cancellations for a specific event type
+ * @param {string} eventType - Event type key (e.g., "sundayService")
+ * @param {number} weeksAhead - Number of weeks to look ahead (default: 4)
+ * @returns {Array} Array of cancellation objects
+ */
+const getUpcomingCancellations = (eventType, weeksAhead = 4) => {
+  try {
+    const event = eventsData.recurringEvents[eventType];
+    if (!event || !event.cancellations) return [];
+    
+    const now = DateTime.now();
+    const today = now.startOf('day');
+    
+    return event.cancellations
+      .filter(cancellation => {
+        if (!cancellation?.date) return false;
+        try {
+          const cancelDate = DateTime.fromISO(cancellation.date).startOf('day');
+          return cancelDate >= today && cancelDate <= today.plus({ weeks: weeksAhead });
+        } catch (error) {
+          console.error('Error processing cancellation date:', error);
+          return false;
+        }
+      })
+      .sort((a, b) => {
+        try {
+          return DateTime.fromISO(a.date) - DateTime.fromISO(b.date);
+        } catch (error) {
+          return 0;
+        }
+      });
+  } catch (error) {
+    console.error('Error getting upcoming cancellations:', error);
+    return [];
+  }
+};
+
+/**
+ * Get the next occurrence of a recurring event
+ * @param {string} eventId - Event identifier (e.g., "sunday-service")
+ * @returns {Object|null} The next future event occurrence, or the first available event
+ */
 const getNextOccurrence = (eventId) => {
+  if (!eventId || typeof eventId !== 'string') {
+    console.warn('getNextOccurrence: Invalid eventId provided');
+    return null;
+  }
+  
   const eventType = eventId.split('-').slice(0, -1).join('-');
   const allEventsOfType = processedEvents.filter(e => e.id.startsWith(eventType));
+  
+  if (allEventsOfType.length === 0) {
+    console.warn(`getNextOccurrence: No events found for type "${eventType}"`);
+    return null;
+  }
   
   const now = DateTime.now();
   const futureEvents = allEventsOfType
@@ -407,6 +481,7 @@ export {
   formatDate,
   getNextOccurrence,
   getEventById,
+  getUpcomingCancellations,
   currentYear,
   nextYear,
   lifeGroupsData,

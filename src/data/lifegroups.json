@@ -41,6 +41,11 @@
           "name": "UC Hope on Campus",
           "url": "https://www.facebook.com/UCHopeOnCampus",
           "type": "facebook"
+        },
+        {
+          "name": "Hope on Campus",
+          "url": "https://www.instagram.com/hopesoncampus/",
+          "type": "instagram"
         }
       ]
     },

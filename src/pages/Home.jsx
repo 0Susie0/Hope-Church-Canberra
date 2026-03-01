@@ -7,7 +7,8 @@ import {
   formatDate, 
   getFilteredEvents, 
   facebookLink,
-  eventsData
+  eventsData,
+  getUpcomingCancellations
 } from '../data/dataService';
 
 const HeroSection = () => (
@@ -37,27 +38,57 @@ const HeroSection = () => (
   </div>
 );
 
-// Helper function to format date consistently
+// Constants
+const CANCELLATION_NOTICE_WEEKS = 4; // Show cancellation notices for next 4 weeks
+
+/**
+ * Format date string for display
+ * @param {string} dateString - ISO date string
+ * @returns {string} Formatted date string
+ */
 const formatDateDisplay = (dateString) => {
-  return DateTime.fromISO(dateString).setLocale('en').toLocaleString({
-    weekday: 'long',
-    month: 'long', 
-    day: 'numeric',
-    year: 'numeric'
-  });
+  if (!dateString) return '';
+  try {
+    return DateTime.fromISO(dateString).setLocale('en').toLocaleString({
+      weekday: 'long',
+      month: 'long', 
+      day: 'numeric',
+      year: 'numeric'
+    });
+  } catch (error) {
+    console.error('Error formatting date:', error);
+    return dateString;
+  }
 };
 
 const ServiceInfo = () => {
   const sundayService = getNextOccurrence("sunday-service");
-  const locationOverrides = eventsData.recurringEvents.sundayService.locationOverrides || [];
-  const defaultLocation = eventsData.recurringEvents.sundayService.location;
-  const isLocationChanged = sundayService.location !== defaultLocation;
+  const locationOverrides = eventsData?.recurringEvents?.sundayService?.locationOverrides || [];
+  const defaultLocation = eventsData?.recurringEvents?.sundayService?.location || '';
+  const isLocationChanged = sundayService?.location !== defaultLocation;
   
   // Get upcoming location overrides
   const now = DateTime.now();
   const upcomingLocationOverrides = locationOverrides
-    .filter(override => DateTime.fromISO(override.date) >= now)
-    .sort((a, b) => DateTime.fromISO(a.date) - DateTime.fromISO(b.date));
+    .filter(override => {
+      if (!override?.date) return false;
+      try {
+        return DateTime.fromISO(override.date) >= now;
+      } catch (error) {
+        console.error('Error processing location override date:', error);
+        return false;
+      }
+    })
+    .sort((a, b) => {
+      try {
+        return DateTime.fromISO(a.date) - DateTime.fromISO(b.date);
+      } catch (error) {
+        return 0;
+      }
+    });
+  
+  // Get upcoming cancellations using the helper function
+  const upcomingCancellations = getUpcomingCancellations('sundayService', CANCELLATION_NOTICE_WEEKS);
   
   return (
     <div className="bg-white py-16">
@@ -66,6 +97,43 @@ const ServiceInfo = () => {
           <h2 className="text-3xl font-bold mb-2 text-gray-900">Service Time &amp; Location</h2>
           <div className="w-20 h-1 bg-black mx-auto" />
         </div>
+
+        {/* Cancellation Notification Banner */}
+        {upcomingCancellations.length > 0 && (
+          <div className="max-w-4xl mx-auto mb-8">
+            <div className="bg-red-50 border-2 border-red-400 rounded-lg p-6 shadow-md">
+              <div className="flex items-start">
+                <div className="flex-shrink-0">
+                  <svg className="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                </div>
+                <div className="ml-3 flex-1">
+                  <h3 className="text-lg font-semibold text-red-900 mb-2">
+                    Service Changes Notice
+                  </h3>
+                  {upcomingCancellations.map((cancellation) => {
+                    const cancellationId = cancellation.date || `cancellation-${Math.random()}`;
+                    const nextServiceDate = sundayService?.date ? DateTime.fromISO(sundayService.date) : null;
+                    return (
+                      <div key={cancellationId} className="text-red-800">
+                        <p className="mb-2">
+                          <strong>No Sunday Service at ANU on {formatDateDisplay(cancellation.date)}</strong>
+                          {cancellation.reason && ` due to ${cancellation.reason}.`}
+                        </p>
+                        {nextServiceDate && sundayService?.date && (
+                          <p className="text-sm font-medium">
+                            The next Sunday Service will be on {formatDateDisplay(sundayService.date)}.
+                          </p>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto justify-items-center">
           <div className={`p-8 md:p-10 rounded-lg shadow-lg w-full max-w-2xl md:col-span-2 ${
@@ -112,11 +180,31 @@ const ServiceInfo = () => {
 
 const ImageCarousel = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const slides = storiesData.imageCarousel;
+  const slides = storiesData?.imageCarousel || [];
   
-  const goToSlide = (index) => setCurrentSlide(index);
+  // Auto-advance slides every 5 seconds
+  React.useEffect(() => {
+    if (slides.length <= 1) return;
+    
+    const interval = setInterval(() => {
+      setCurrentSlide(prev => (prev === slides.length - 1 ? 0 : prev + 1));
+    }, 5000);
+    
+    return () => clearInterval(interval);
+  }, [slides.length]);
+  
+  const goToSlide = (index) => {
+    if (index >= 0 && index < slides.length) {
+      setCurrentSlide(index);
+    }
+  };
+  
   const goToPrev = () => setCurrentSlide(prev => prev === 0 ? slides.length - 1 : prev - 1);
   const goToNext = () => setCurrentSlide(prev => prev === slides.length - 1 ? 0 : prev + 1);
+  
+  if (slides.length === 0) {
+    return null;
+  }
   
   return (
     <div className="py-16 bg-white">
@@ -138,12 +226,17 @@ const ImageCarousel = () => {
             <div className="relative h-96">
               {slides.map((slide, index) => (
                 <div 
-                  key={index} 
+                  key={slide.title || `slide-${index}`} 
                   className={`absolute inset-0 transition-opacity duration-500 ${
                     index === currentSlide ? 'opacity-100' : 'opacity-0'
                   }`}
                 >
-                  <img src={slide.image} alt={slide.title} className="w-full h-full object-cover" />
+                  <img 
+                    src={slide.image} 
+                    alt={slide.title || `Carousel slide ${index + 1}`} 
+                    className="w-full h-full object-cover"
+                    loading={index === 0 ? 'eager' : 'lazy'}
+                  />
                   <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-6">
                     <p className="text-white text-xl">{slide.title}</p>
                   </div>
@@ -190,7 +283,18 @@ const ImageCarousel = () => {
   );
 };
 
+/**
+ * Event Card Component
+ * @param {Object} props
+ * @param {Object} props.event - Event object with id, title, description, image, date, etc.
+ * @param {string} props.facebookLink - Default Facebook link
+ */
 const EventCard = ({ event, facebookLink }) => {
+  if (!event) {
+    console.warn('EventCard: event prop is required');
+    return null;
+  }
+  
   const eventFacebookLink = event.facebookLink || facebookLink;
   
   return (
@@ -228,9 +332,15 @@ const UpcomingEvents = () => {
           <div className="w-20 h-1 bg-black mx-auto" />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {events.map(event => (
-            <EventCard key={event.id} event={event} facebookLink={facebookLink} />
-          ))}
+          {events.length > 0 ? (
+            events.map(event => (
+              <EventCard key={event.id || `event-${Math.random()}`} event={event} facebookLink={facebookLink} />
+            ))
+          ) : (
+            <div className="col-span-full text-center text-gray-600 py-8">
+              No upcoming events at this time.
+            </div>
+          )}
         </div>
         <div className="text-center mt-12">
           <Link 
@@ -260,8 +370,9 @@ const CommunityStories = () => {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-          {stories.map((story, index) => (
-            <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden">
+          {stories.length > 0 ? (
+            stories.map((story, index) => (
+              <div key={story.name || `story-${index}`} className="bg-white rounded-lg shadow-md overflow-hidden">
               <div className="h-64 bg-gray-200">
                 <img 
                   src={story.image} 
@@ -280,7 +391,12 @@ const CommunityStories = () => {
                 <p className="text-gray-700">{story.role}</p>
               </div>
             </div>
-          ))}
+            ))
+          ) : (
+            <div className="col-span-full text-center text-gray-600 py-8">
+              No community stories available at this time.
+            </div>
+          )}
         </div>
       </div>
     </div>

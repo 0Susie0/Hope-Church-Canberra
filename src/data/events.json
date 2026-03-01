@@ -16,6 +16,12 @@
           "date": "2026-01-04",
           "location": "Coombs Community Centre"
         }
+      ],
+      "cancellations": [
+        {
+          "date": "2026-03-08",
+          "reason": "Church Camp"
+        }
       ]
     },
     "kidsChurch": {
