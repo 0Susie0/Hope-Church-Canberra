@@ -1,4 +1,14 @@
 {
+  "site": {
+    "visitUs": {
+      "googleMapEmbedUrls": {
+        "lowitjaODonoghueCulturalCentre": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3257.1799998820266!2d149.11717619678953!3d-35.27665069999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6b164dee05699c33%3A0x35dc37aecc1fb698!2sLowitja%20O%27Donoghue%20Cultural%20Centre!5e0!3m2!1sen!2sau!4v1773837032578!5m2!1sen!2sau",
+        "coombsCommunityCentre": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3255.459854129417!2d149.03810367617055!3d-35.3194005956475!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6b17b38196f56d4f%3A0x272dcd7caafbfc2f!2sCoombs%20Community%20Centre!5e0!3m2!1sen!2sau!4v1773837125861!5m2!1sen!2sau",
+        "haydonAllenLectureTheatreTheTank": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d6514.282052282675!2d149.11990227616857!3d-35.277619793401136!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6b164d436a1c9389%3A0xc2bcadf1422258f5!2sHaydon-Allen%20Lecture%20Theatre%20-%20The%20Tank!5e0!3m2!1sen!2sau!4v1773837193977!5m2!1sen!2sau",
+        "MarieReayTeachingCentre":"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3257.1391276238096!2d149.12050969999999!3d-35.277667!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6b164dd561474de7%3A0xb7a74aa23f1f5931!2sMarie%20Reay%20Teaching%20Centre%20(Building%20155)!5e0!3m2!1sen!2sau!4v1773834543918!5m2!1sen!2sau"
+      }
+    }
+  },
   "recurringEvents": {
     "sundayService": {
       "title": "Sunday Service",
@@ -18,7 +28,7 @@
         },
         {
           "date": "2026-03-29",
-          "location": "Haydon-Allen Lecture Theatre, The Australian National University"
+          "location": "Haydon-Allen Lecture Theatre - The Tank, The Australian National University"
         }
       ],
       "cancellations": [
@@ -41,8 +51,12 @@
           "location": "Coombs Community Centre"
         },
         {
-          "date": "2026-01-04",
-          "location": "Coombs Community Centre"
+          "date": "2026-03-22",
+          "location": "Level 6, Marie Reay Teaching Centre, The Australian National University"
+        },
+        {
+          "date": "2026-03-29",
+          "location": "Haydon-Allen Lecture Theatre - The Tank, The Australian National University"
         }
       ]
     },

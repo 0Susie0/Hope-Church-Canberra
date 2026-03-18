@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { FaMapMarkerAlt, FaPhoneAlt, FaEnvelope, FaClock, FaFacebook, FaInstagram } from 'react-icons/fa';
-import { processedEvents, getNextOccurrence } from '../data/dataService';
+import { FaFacebook, FaInstagram } from 'react-icons/fa';
+import { getNextOccurrence, getVisitUsGoogleMapEmbedUrl } from '../data/dataService';
 import '../styles/VisitUs.css';
 
 const PageHeader = ({ title, subtitle, backgroundImage }) => (
@@ -29,6 +29,7 @@ const PageHeader = ({ title, subtitle, backgroundImage }) => (
 const LocationInfo = () => {
   // Get the next Sunday service from the data service
   const sundayService = getNextOccurrence("sunday-service");
+  const mapEmbedUrl = getVisitUsGoogleMapEmbedUrl(sundayService?.location);
 
   return (
   <div className="py-16 bg-white">
@@ -54,9 +55,9 @@ const LocationInfo = () => {
             {/* Content overlay */}
             <div className="relative z-10 p-6 text-white">
               <h3 className="text-xl font-semibold mb-3 text-white">Service Information</h3>
-              <p className="mb-3"><span className="font-medium">Service Time:</span> {sundayService.time} Sundays</p>
+              <p className="mb-3"><span className="font-medium">Service Time:</span> {sundayService?.time || "10:00 AM"} Sundays</p>
               <p className="mb-1"><span className="font-medium">Service Location:</span></p>
-              <p className="mb-1">{sundayService.location}</p>
+              <p className="mb-1">{sundayService?.location || "Location to be announced"}</p>
             </div>
           </div>
           
@@ -108,8 +109,7 @@ const LocationInfo = () => {
             {/* Google Map */}
             <div className="h-96 bg-gray-200 rounded-lg overflow-hidden shadow-xl">
               <iframe 
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d6514.359999764052!2d149.1219398!3d-35.2766507!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6b164dee05699c33%3A0x35dc37aecc1fb698!2sCultural%20Centre%20Kambri%20(ANU%20Building%20153)!5e0!3m2!1sen!2sau!4v1745560202371!5m2!1sen!2sau" 
-                //src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d684.3771859154488!2d149.04098747735233!3d-35.319275871494874!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6b17b38196f56d4f%3A0x272dcd7caafbfc2f!2sCoombs%20Community%20Centre!5e0!3m2!1sen!2sau!4v1766387059465!5m2!1sen!2sau"
+                src={mapEmbedUrl}
                 width="100%" 
                 height="100%" 
                 style={{ border: 0 }} 

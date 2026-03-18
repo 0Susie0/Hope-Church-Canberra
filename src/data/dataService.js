@@ -470,6 +470,28 @@ const getEventById = (id) => {
   return processedEvents.find(e => String(e.id) === id);
 };
 
+/**
+ * Get the Visit Us page Google Map embed URL from events.json.
+ * If a location is provided, tries to pick a venue-specific map first.
+ * @param {string=} location
+ * @returns {string} Google Maps embed URL
+ */
+const getVisitUsGoogleMapEmbedUrl = (location) => {
+  const fallback = eventsData?.site?.visitUs?.googleMapEmbedUrl;
+  const mapUrls = eventsData?.site?.visitUs?.googleMapEmbedUrls || {};
+  const normalizedLocation = typeof location === 'string' ? location.toLowerCase() : '';
+
+  const byVenue =
+    (normalizedLocation.includes('lowitja') && mapUrls.lowitjaODonoghueCulturalCentre) ||
+    (normalizedLocation.includes('coombs') && mapUrls.coombsCommunityCentre) ||
+    (normalizedLocation.includes('haydon-allen') && mapUrls.haydonAllenLectureTheatreTheTank) ||
+    (normalizedLocation.includes('marie reay') && mapUrls.MarieReayTeachingCentre) ||
+    null;
+
+  const url = byVenue || fallback;
+  return typeof url === 'string' && url.trim().length > 0 ? url.trim() : '';
+};
+
 // Export facebookLink as a named export
 const facebookLink = FACEBOOK_LINK;
 
@@ -482,6 +504,7 @@ export {
   getNextOccurrence,
   getEventById,
   getUpcomingCancellations,
+  getVisitUsGoogleMapEmbedUrl,
   currentYear,
   nextYear,
   lifeGroupsData,
